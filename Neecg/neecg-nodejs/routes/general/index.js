@@ -38,7 +38,6 @@ const General = (model) => {
     }
 
     const add = async (req, res, LifeCycle = {}) => {
-       
         model.create(req.body)
             .then(result => {
                 if (!LifeCycle.callback) {

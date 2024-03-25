@@ -5,6 +5,7 @@ const SystemUser = require('../model/SystmeUserModel')
 const SystmeRole = require('../model/SystmeRoleModel')
 const SystemDataDict = require('../model/SystemDataDictModel')
 const SystemDataDictConfig = require('../model/SystemDataDictConfigModel')
+const Carousel = require('../model/CarouselModel')
 
 const db = (success, error = (err) => {
     console.error('无法连接到数据库:', err);
@@ -22,4 +23,4 @@ const db = (success, error = (err) => {
     })
 }
 
-module.exports = {db,Op,SystemMenu,SystemUser,SystmeRole,SystemDataDict,SystemDataDictConfig}
+module.exports = {db,Op,SystemMenu,SystemUser,SystmeRole,SystemDataDict,SystemDataDictConfig,Carousel}

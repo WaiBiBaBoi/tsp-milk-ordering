@@ -22,6 +22,7 @@ const SystemRole = require('./routes/api/SystemRole');
 const SystemPermission = require('./routes/api/SystemPermission');
 const SystemDataDict = require('./routes/api/SystemDataDict');
 const SystemDataDictConfig = require('./routes/api/SystemDataDictConfig');
+const Carousel = require('./routes/api/Carousel');
 
 
 // 创建Express应用
@@ -45,7 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 应用CORS中间件允许跨域请求
 app.use(cors());
 // 设置路由以排除Token验证中间件的路径
-const excludedPaths = ['/api/SystmeUser/login'];
+const excludedPaths = ['/api/SystmeUser/login', '/api/carousel/list'];
 // 自定义中间件，用于排除某些路径不用经过Token验证
 app.use((req, res, next) => {
   if (excludedPaths.includes(req.path)) {
@@ -64,6 +65,7 @@ app.use('/api/SystemRole', SystemRole);
 app.use('/api/SystemPermission', SystemPermission);
 app.use('/api/SystemDataDict', SystemDataDict);
 app.use('/api/SystemDataDictConfig', SystemDataDictConfig);
+app.use('/api/Carousel', Carousel);
 
 
 // 捕获404错误并转发到错误处理器
