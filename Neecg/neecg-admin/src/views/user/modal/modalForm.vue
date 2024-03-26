@@ -4,17 +4,20 @@
 
         <a-form ref="form" :model="model" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
             autocomplete="off" :rules="rules" labelAlign="right" >
-            <a-form-item label="标题" name="title">
-                <a-input placeholder="轮播图标题" v-model:value="model.title" />
+            <a-form-item label="用户名" name="title">
+                <a-input placeholder="用户名" v-model:value="model.user_name" />
             </a-form-item>
-            <a-form-item label="简介" name="introduction" >
-                <a-textarea v-model:value="model.introduction" placeholder="轮播图简介" :rows="4" />
+            <a-form-item label="用户账号" name="introduction" >
+                <a-input v-model:value="model.user_account" placeholder="用户账号"  />
             </a-form-item>
-            <a-form-item label="启用" name="is_using" >
+            <a-form-item label="密码" name="introduction" >
+                <a-input v-model:value="model.user_password" placeholder="密码"  />
+            </a-form-item>
+            <!-- <a-form-item label="启用" name="is_using" >
                 <a-switch v-model:checked="model.is_using" />
-            </a-form-item>
-            <a-form-item label="图片" name="image" >
-                <n-upload v-model="model.image"></n-upload>
+            </a-form-item> -->
+            <a-form-item label="头像" name="image" >
+                <n-upload v-model="model.avatar"></n-upload>
             </a-form-item>
         </a-form>
         <template #footer>
@@ -39,8 +42,8 @@ const open = ref(false);
 const form = ref(null)
 let model = reactive({})
 const httpUrl = reactive({
-    add: 'Carousel/add',
-    edit: 'Carousel/edit'
+    add: 'User/add',
+    edit: 'User/edit'
 })
 const rules = reactive({
     // title: [{ required: true, message: '请填写角色名称' }],
@@ -71,7 +74,7 @@ const showDrawer = (param = {}) => {
     }
 };
 const add = (param) => {
-    model = Object.assign({is_using:false}, param)
+    model = Object.assign({}, param)
     open.value = true;
 }
 const edit = (param) => {

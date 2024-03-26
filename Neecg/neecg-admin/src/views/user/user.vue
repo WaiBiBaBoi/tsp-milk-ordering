@@ -4,9 +4,9 @@
             <a-form layout="horizontal" :model="data.queryParam">
                 <a-row :gutter="[16, 24]">
                     <a-col class="gutter-row" :span="6">
-                        <a-form-item label="轮播图标题">
-                            <a-input style="width: 100%;" v-model:value="data.queryParam.title"
-                                placeholder="轮播图标题" />
+                        <a-form-item label="用户账号">
+                            <a-input style="width: 100%;" v-model:value="data.queryParam.user_account"
+                                placeholder="用户账号" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -58,17 +58,35 @@ import {Composable} from '@/composable/TableComposable'
 const {data,handle} = Composable()
 const columns = [
     {
-        title: '轮播图标题',
-        dataIndex: 'title',
-        key: 'role_name',
+        title: '用户名',
+        dataIndex: 'user_name',
+        key: 'user_name',
     },
     {
-        title: '状态',
-        dataIndex: 'is_using',
-        key: 'is_using',
-        width: '147px',
-        slots: { customRender: 'state' }, // 这里设置slots属性
+        title: '用户账号',
+        dataIndex: 'user_account',
+        key: 'user_account',
     },
+    {
+        title: '用户头像',
+        dataIndex: 'avatar',
+        key: 'avatar',
+    },
+    {
+        title: '用户余额',
+        dataIndex: 'money',
+        key: 'money',
+    },
+    // {
+    //     title: '收货默认手机号',
+    //     dataIndex: 'phone',
+    //     key: 'phone',
+    // },
+    // {
+    //     title: '收货默认地址',
+    //     dataIndex: 'address',
+    //     key: 'address',
+    // },
     {
         title: '操作',
         dataIndex: 'operation',
@@ -81,8 +99,8 @@ const RefForm = ref(null)
 const RefDescrip = ref(null)
 
 const httpUrl = reactive({
-    list:'Carousel/list',
-    delete:'Carousel/delete'
+    list:'User/list',
+    delete:'User/delete'
 })
 
 onMounted(() => {

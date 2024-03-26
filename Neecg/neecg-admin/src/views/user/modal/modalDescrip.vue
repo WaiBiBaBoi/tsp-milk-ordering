@@ -9,18 +9,27 @@
     @after-open-change="afterOpenChange"
   >
     <a-descriptions layout="vertical" bordered>
-      <a-descriptions-item label="标题" :span="3">{{
-        model.title
+      <a-descriptions-item label="用户名" :span="3">{{
+        model.user_name
       }}</a-descriptions-item>
-      <a-descriptions-item label="简介" :span="3">{{
-        model.introduction
+      <a-descriptions-item label="用户账号" :span="3">{{
+        model.user_account
       }}</a-descriptions-item>
-      <a-descriptions-item label="状态" :span="3">
+      <a-descriptions-item label="用户余额" :span="3">{{
+        model.money
+      }}</a-descriptions-item>
+      <a-descriptions-item label="收货默认手机号" :span="3">{{
+        model.phone
+      }}</a-descriptions-item>
+      <a-descriptions-item label="收货默认地址" :span="3">{{
+        model.address
+      }}</a-descriptions-item>
+      <!-- <a-descriptions-item label="状态" :span="3">
         <a-tag color="success" v-if="model.is_using">启用</a-tag>
         <a-tag color="error" v-else>关闭</a-tag>
-      </a-descriptions-item>
-      <a-descriptions-item label="图像" :span="3">
-        <a-image :width="200" :src="model.image" />
+      </a-descriptions-item> -->
+      <a-descriptions-item label="用户头像" :span="3">
+        <a-image :width="200" :src="model.avatar" />
       </a-descriptions-item>
     </a-descriptions>
     <template #footer>

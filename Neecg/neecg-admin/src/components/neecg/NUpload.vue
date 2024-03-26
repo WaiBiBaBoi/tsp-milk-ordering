@@ -15,16 +15,41 @@
   
   <script setup>
 import { ref } from "vue";
-import {uploadAction} from '@/api/manage'
+import { uploadAction } from "@/api/manage";
+
 const props = defineProps({
   limit: {
     type: Number,
-    default: 1
+    default: 1,
   },
-})
-const fileList = ref([]);
+  modelValue: String,
+});
+const emit = defineEmits(["update:modelValue"]);
+const fileList = ref(
+  (() => {
+    if (props.modelValue) {
+      let arr = props.modelValue.split(",");
+      let result = [];
+      for (let i = 0; i > arr.length; i++) {
+        result.push({
+          url: result[i],
+        });
+      }
+      return result;
+    } else {
+      return [];
+    }
+  })()
+);
 const uploadLimit = props.limit; // 设置上传数量限制
-
+const updateModelValue = () => {
+  // 仅当路径数组变更时更新父组件的v-model绑定值
+  let arr = []
+  for(let i = 0; i < fileList.value.length; i++){
+    arr.push(fileList.value[i].url)
+ }
+  emit('update:modelValue',arr.join(','));
+};
 function beforeUpload(file) {
   if (fileList.value.length >= uploadLimit) {
     alert(`You can only upload ${uploadLimit} images.`);
@@ -46,31 +71,29 @@ function beforeUpload(file) {
 }
 
 function handleChange({ file, fileList: newFileList }) {
-  console.log(file,'file');
+  //
   if (file.status === "done") {
     // 通常服务器会在响应中返回文件信息，包括文件URL
     file.url = file.response.filePath;
   } else if (file.status === "error") {
     alert(`File upload failed: ${file.name}`);
+  } else if (file.status === "removed") {
   }
-
-  console.log( 'newFileList', newFileList);
   fileList.value = newFileList;
+  updateModelValue()
 }
 
 function customUpload(options) {
-  //  
-  const { onSuccess,onError, file ,onProgress } = options;
-
+  const { onSuccess, onError, file, onProgress } = options;
   const formData = new FormData();
   formData.append("file", file);
-  uploadAction("/upload/file", formData,onProgress).then((response) => {
-    console.log(response);
-    
-    onSuccess(response, file);
-  }).catch(onError);
+  uploadAction("/upload/file", formData, onProgress)
+    .then((response) => {
+      console.log(response);
 
-  
+      onSuccess(response, file);
+    })
+    .catch(onError);
 }
 </script>
   

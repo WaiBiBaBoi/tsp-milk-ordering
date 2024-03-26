@@ -100,8 +100,8 @@ export function Composable() {
     }
 
     const init = (config) => {
-        modalForm.value = config.modalForm.value
-        modalDescrip.value = config.modalDescrip.value
+        modalForm.value = config.modalForm?.value
+        modalDescrip.value = config.modalDescrip?.value
         httpUrl = config.httpUrl
     }
     let data = reactive({

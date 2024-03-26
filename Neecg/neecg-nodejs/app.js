@@ -24,6 +24,7 @@ const SystemDataDict = require('./routes/api/SystemDataDict');
 const SystemDataDictConfig = require('./routes/api/SystemDataDictConfig');
 const Upload = require('./routes/api/Upload');
 const Carousel = require('./routes/api/Carousel');
+const User = require('./routes/api/User');
 
 
 // 创建Express应用
@@ -68,6 +69,7 @@ app.use('/api/SystemDataDict', SystemDataDict);
 app.use('/api/SystemDataDictConfig', SystemDataDictConfig);
 app.use('/api/upload', Upload);
 app.use('/api/Carousel', Carousel);
+app.use('/api/User', User);
 
 
 // 捕获404错误并转发到错误处理器

@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // 这里我们调用cb回调函数指定文件的上传目录
     // 'uploads/'是我们要将文件存储的目录
-    cb(null, 'uploads/');
+    cb(null, 'public/images');
   },
   // filename用来确定文件夹中的文件名的确定
   // 它也可以是一个字符串或一个函数
