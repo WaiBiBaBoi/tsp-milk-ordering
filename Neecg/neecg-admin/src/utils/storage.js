@@ -62,3 +62,7 @@ export const getMenu = () => {
         return null
     }
 }
+
+export const clearMenu = () => {
+    sessionStorage.removeItem('menu');
+}

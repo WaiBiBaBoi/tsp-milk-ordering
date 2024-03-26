@@ -22,6 +22,7 @@ const SystemRole = require('./routes/api/SystemRole');
 const SystemPermission = require('./routes/api/SystemPermission');
 const SystemDataDict = require('./routes/api/SystemDataDict');
 const SystemDataDictConfig = require('./routes/api/SystemDataDictConfig');
+const Upload = require('./routes/api/Upload');
 const Carousel = require('./routes/api/Carousel');
 
 
@@ -65,6 +66,7 @@ app.use('/api/SystemRole', SystemRole);
 app.use('/api/SystemPermission', SystemPermission);
 app.use('/api/SystemDataDict', SystemDataDict);
 app.use('/api/SystemDataDictConfig', SystemDataDictConfig);
+app.use('/api/upload', Upload);
 app.use('/api/Carousel', Carousel);
 
 

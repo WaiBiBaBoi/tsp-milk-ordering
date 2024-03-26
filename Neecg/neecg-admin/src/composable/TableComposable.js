@@ -10,6 +10,7 @@ export function Composable() {
     const tableData = ref([]);
 
     const modalForm = ref(null)
+    const modalDescrip = ref(null)
 
     let queryParam = reactive({})
 
@@ -17,11 +18,11 @@ export function Composable() {
 
     const pagination = reactive({
         current: 1, // 当前页数
-        pageSize: 1, // 每页条数
+        pageSize: 10, // 每页条数
         total: 2, // 数据总数，通常需要从服务器端获取
         showSizeChanger: true, // 是否显示 pageSize 选择器
         showQuickJumper: true, // 是否可以快速跳转至某页
-        pageSizeOptions: ['1', '10', '30', '40'], // 指定每页可以显示多少条
+        pageSizeOptions: ['5', '10', '30', '40'], // 指定每页可以显示多少条
         showTotal: (total, range) => `共 ${total} 条`, // 用于显示数据总量和当前数据顺序
     })
 
@@ -50,6 +51,10 @@ export function Composable() {
 
     const handleEdit = (record) => {
         modalForm.value.showDrawer(record)
+    }
+
+    const handleDetails = (record) => {
+        modalDescrip.value.showDrawer(record)
     }
 
     const handleDelete = (record) => {
@@ -96,6 +101,7 @@ export function Composable() {
 
     const init = (config) => {
         modalForm.value = config.modalForm.value
+        modalDescrip.value = config.modalDescrip.value
         httpUrl = config.httpUrl
     }
     let data = reactive({
@@ -110,6 +116,7 @@ export function Composable() {
         handleAdd,
         handleAddChild,
         handleEdit,
+        handleDetails,
         handleDelete,
         submitSuccess,
         handleList,

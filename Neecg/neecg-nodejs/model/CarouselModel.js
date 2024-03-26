@@ -28,7 +28,8 @@ Carousel.init({
     },
     image: {
       type: DataTypes.STRING,
-      allowNull: false
+      // allowNull: false
+      defaultValue: ''
     },
     is_using: {
       type: DataTypes.BOOLEAN,

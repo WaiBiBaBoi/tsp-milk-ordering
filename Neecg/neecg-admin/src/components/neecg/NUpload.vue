@@ -15,7 +15,7 @@
   
   <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import {uploadAction} from '@/api/manage'
 const props = defineProps({
   limit: {
     type: Number,
@@ -37,45 +37,40 @@ function beforeUpload(file) {
     alert("You can only upload JPG or PNG files!");
     return Promise.reject(new Error("Incorrect file type"));
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    alert("Image must be smaller than 2MB!");
-    return Promise.reject(new Error("File too large"));
-  }
+  // const isLt2M = file.size / 1024 / 1024 < 2;
+  // if (!isLt2M) {
+  //   alert("Image must be smaller than 2MB!");
+  //   return Promise.reject(new Error("File too large"));
+  // }
   return true;
 }
 
 function handleChange({ file, fileList: newFileList }) {
+  console.log(file,'file');
   if (file.status === "done") {
     // 通常服务器会在响应中返回文件信息，包括文件URL
-    file.url = file.response.url;
+    file.url = file.response.filePath;
   } else if (file.status === "error") {
     alert(`File upload failed: ${file.name}`);
   }
+
+  console.log( 'newFileList', newFileList);
   fileList.value = newFileList;
 }
 
 function customUpload(options) {
-  const { onSuccess, onError, file, onProgress } = options;
+  //  
+  const { onSuccess,onError, file ,onProgress } = options;
 
   const formData = new FormData();
   formData.append("file", file);
+  uploadAction("/upload/file", formData,onProgress).then((response) => {
+    console.log(response);
+    
+    onSuccess(response, file);
+  }).catch(onError);
 
-  axios
-    .post("/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      onUploadProgress: (progressEvent) => {
-        onProgress({
-          percent: (progressEvent.loaded / progressEvent.total) * 100,
-        });
-      },
-    })
-    .then((response) => {
-      onSuccess(response.data, file);
-    })
-    .catch(onError);
+  
 }
 </script>
   

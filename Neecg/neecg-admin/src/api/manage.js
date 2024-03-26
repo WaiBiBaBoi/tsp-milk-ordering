@@ -112,13 +112,18 @@ export function downloadFile(url, fileName, parameter) {
  * @param parameter
  * @returns {*}
  */
-export function uploadAction(url,parameter){
+export function uploadAction(url,parameter,onProgress){
   return axios({
     url: url,
     data: parameter,
     method:'post' ,
     headers: {
       'Content-Type': 'multipart/form-data',  // 文件上传
+    },
+    onUploadProgress: (progressEvent) => {
+      onProgress({
+        percent: (progressEvent.loaded / progressEvent.total) * 100,
+      });
     },
   })
 }

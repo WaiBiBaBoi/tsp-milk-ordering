@@ -59,7 +59,7 @@
 import { ref, reactive, watch, h, onMounted } from "vue";
 import { useRoute } from 'vue-router';
 import router from '@/router/index'
-import { getMenu,clearUser } from "@/utils/storage";
+import { getMenu,clearUser,clearMenu } from "@/utils/storage";
 import { buildTree } from "@/utils/buildTree";
 const route = useRoute();
 const state = reactive({
@@ -91,6 +91,7 @@ const selectMenu = (e) => {
 const logOut = () => {
   router.push('/login')
   clearUser()
+  clearMenu()
 }
 onMounted(() => {
   let arr = getMenu();
