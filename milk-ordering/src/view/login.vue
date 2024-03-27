@@ -13,12 +13,12 @@
             @finish="onFinish"
             @finishFailed="onFinishFailed"
           >
-            <a-form-item label="账号" name="username" class="color-fff">
-              <a-input v-model:value="param.username" />
+            <a-form-item label="账号" name="user_account" class="color-fff">
+              <a-input v-model:value="param.user_account" />
             </a-form-item>
 
-            <a-form-item label="密码" name="password" class="color-fff">
-              <a-input-password v-model:value="param.password" />
+            <a-form-item label="密码" name="user_password" class="color-fff">
+              <a-input-password v-model:value="param.user_password" />
             </a-form-item>
             <a-form-item
               v-if="formState === 'register'"
@@ -31,7 +31,10 @@
                   v-model:value="param.code"
                   style="width: calc(100% - 80px)"
                 />
-                <a-button type="primary" style="width: 80px">获取</a-button>
+                <a-button type="primary" :disabled="codeState" style="width: 80px" @click="getCode"
+                  >获取</a-button
+                >
+               
               </a-input-group>
             </a-form-item>
             <a-button type="primary" html-type="submit" style="width: 100%">{{
@@ -53,16 +56,20 @@
 
 <script setup>
 import { ref, reactive } from "vue";
+import { postAction } from "../api/manage";
+import router from "../router/index";
+import { message } from 'ant-design-vue';
 let formState = ref("login");
 let param = reactive({
-  username: "",
-  password: "",
+  user_account: "",
+  user_password: "",
   code: "",
 });
+let codeState = ref(false)
 const formRef = ref(null);
 let rules = reactive({
-  username: [
-    { required: true, message: "Please input your username!" },
+  user_account: [
+    { required: true, message: "Please input your user_account!" },
     {
       type: "email",
       message: "Please input a valid email!",
@@ -74,17 +81,17 @@ let rules = reactive({
       trigger: ["blur", "change"],
     },
   ],
-  password: [
-    { required: true, message: "Please input your password!" },
+  user_password: [
+    { required: true, message: "Please input your user_password!" },
     {
       min: 8,
       max: 16,
-      message: "Password must be 8-16 characters!",
+      message: "user_password must be 8-16 characters!",
       trigger: "blur",
     },
     {
       pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/,
-      message: "Password must include letters and numbers!",
+      message: "user_password must include letters and numbers!",
       trigger: "blur",
     },
   ],
@@ -100,9 +107,47 @@ const handleFormState = () => {
 };
 const onFinish = (values) => {
   console.log("Success:", values);
+  let url = "";
+  if (formState.value === "login") {
+    url = "User/login";
+  } else if (formState.value === "register") {
+    url = "User/register";
+  }
+  login(url, values);
+};
+const login = (url, values) => {
+  postAction(url, values).then((res) => {
+    if (res.code === "0000") {
+      if (formState.value === "login") {
+        formRef.value.resetFields();
+        codeState.value = false
+        router.push("/");
+      } else if (formState.value === "register") {
+        formState.value = "login"
+        login('User/login', values);
+      }
+    }else{
+      message.error(res.message);
+    }
+  });
 };
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
+};
+
+const getCode = () => {
+  console.log(2333);
+  codeState.value = true
+  postAction("Tools/email", { email: param.user_account }).then((res) => {
+    console.log(res);
+    if(res.code === '0000'){
+      setTimeout(() => {
+        codeState.value = false
+      },6000 * 100)
+    }else{
+      codeState.value = false
+    }
+  });
 };
 </script>
 
@@ -146,9 +191,9 @@ const onFinishFailed = (errorInfo) => {
     color: red !important;
   }
 }
-.color-fff{
-    .ant-form-item-required{
-        color: #FFF !important;
-    }
+.color-fff {
+  .ant-form-item-required {
+    color: #fff !important;
+  }
 }
 </style>

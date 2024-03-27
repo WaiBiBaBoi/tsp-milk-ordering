@@ -52,9 +52,9 @@ app.use(cors());
 const excludedPaths = [
   '/api/SystmeUser/login',
   '/api/carousel/list',
-  '/api/tools/email',
-  '/api/user/register',
-  '/api/user/login'
+  '/api/Tools/email',
+  '/api/User/register',
+  '/api/User/login',
 ];
 // 自定义中间件，用于排除某些路径不用经过Token验证
 app.use((req, res, next) => {
@@ -74,7 +74,7 @@ app.use('/api/SystemRole', SystemRole);
 app.use('/api/SystemPermission', SystemPermission);
 app.use('/api/SystemDataDict', SystemDataDict);
 app.use('/api/SystemDataDictConfig', SystemDataDictConfig);
-app.use('/api/upload', Upload);
+app.use('/api/Upload', Upload);
 app.use('/api/Carousel', Carousel);
 app.use('/api/User', User);
 app.use('/api/Tools', Tools);

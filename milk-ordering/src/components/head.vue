@@ -12,7 +12,8 @@
 </template>
 
 <script setup>
-
+import {getCookieValue} from '../utils/cookie'
+console.log(getCookieValue('milk-token'));
 </script>
 
 <style lang="less" scoped>
