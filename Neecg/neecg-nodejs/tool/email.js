@@ -27,7 +27,7 @@ class Testimonial {
   /** @type {Number} 默认有效期时间为10分钟 */
   deleteTime;
 
-  constructor(deleteTime = 60 * 10 * 1000) {
+  constructor(deleteTime = 10 * 60 * 1000) {
     this.deleteTime = deleteTime;
     this.codes = [];
   }
@@ -49,6 +49,7 @@ class Testimonial {
     setTimeout(() => {
       const code = this.codes[index];
       if (code === oldItem) this.codes.splice(index, 1);
+      console.log(`验证码: ${oldItem} 销毁`);
     }, this.deleteTime);
   }
 

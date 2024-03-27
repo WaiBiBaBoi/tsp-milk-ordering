@@ -37,11 +37,6 @@ const userIsExist = (req, res, next) => {
         }
         // 删除验证码
         testimonial.existe(req.body.code);
-        delete req.body.code;
-        // 注册阶段默认删除金额字段
-        delete req.body.money;
-        // 🤡tip: 用时间戳作为用户默认名
-        req.body.user_name = Date.now().toString();
         next();
     }).catch(err => {
         res.json({
@@ -52,10 +47,28 @@ const userIsExist = (req, res, next) => {
     });
 }
 
-/**
- * user_account
- * user_password
- */
+// 注册
+router.post('/register', codeIsExist, userIsExist, (req, res) => {
+    const { user_account, user_password } = req.body;
+    User.create({
+        user_name: Date.now().toString(),
+        user_account,
+        user_password
+    }).then(result => {
+        res.json({
+            code: '0000',
+            message: '注册成功'
+        });
+    }).catch(err => {
+        res.json({
+            code: '1001',
+            message: '注册失败',
+            data: err
+        });
+    });
+})
+
+// 登录
 router.post('/login', (req, res) => {
     const { user_account, user_password } = req.body;
     User.findOne({
@@ -68,7 +81,7 @@ router.post('/login', (req, res) => {
         if (result) {
             const token = jwtTokne(result);
             res.cookie('token', token).json({
-                code:'1000',
+                code:'0000',
                 message:'登录成功!',
                 data: result
             });
@@ -86,7 +99,7 @@ router.get('/list', (req, res) => {
     list(req, res)
 })
 
-router.post('/add', codeIsExist, userIsExist, (req, res) => {
+router.post('/add', (req, res) => {
     add(req, res)
 })
 

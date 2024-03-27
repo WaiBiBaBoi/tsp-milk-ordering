@@ -53,7 +53,7 @@ const excludedPaths = [
   '/api/SystmeUser/login',
   '/api/carousel/list',
   '/api/tools/email',
-  '/api/user/add',
+  '/api/user/register',
   '/api/user/login'
 ];
 // 自定义中间件，用于排除某些路径不用经过Token验证
