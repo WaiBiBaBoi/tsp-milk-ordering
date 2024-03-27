@@ -48,7 +48,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // 应用CORS中间件允许跨域请求
 app.use(cors({
-  origin: '*'
+  origin:true,
+  credentials: true
 }));
 // 设置路由以排除Token验证中间件的路径
 const excludedPaths = [
