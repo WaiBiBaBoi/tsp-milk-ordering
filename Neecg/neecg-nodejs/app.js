@@ -47,7 +47,9 @@ app.use(cookieParser());
 // 设置静态文件夹的路径，如JavaScript、CSS或图片等
 app.use(express.static(path.join(__dirname, 'public')));
 // 应用CORS中间件允许跨域请求
-app.use(cors());
+app.use(cors({
+  origin: '*'
+}));
 // 设置路由以排除Token验证中间件的路径
 const excludedPaths = [
   '/api/SystmeUser/login',
