@@ -11,7 +11,6 @@ router.post('/email', async (req, res) => {
     subject: '验证码',
     text: `本次验证码为：${code}，有效期10分钟。`
   };
-  console.log(testimonial);
   try {
     await sendMail(mailOptions);
     res.json({

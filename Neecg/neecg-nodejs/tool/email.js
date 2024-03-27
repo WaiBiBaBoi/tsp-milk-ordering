@@ -34,7 +34,7 @@ class Testimonial {
 
   create() {
     while (true) {
-      const code = Array(6).fill(0).map(_ => Math.floor(Math.random() * 10)).join('');
+      const code = Array(6).fill(0).map(_ => Math.floor(Math.random() * 9) + 1).join('');
       if (!this.codes.includes(code)) {
         this.push(code);
         return code;
@@ -52,10 +52,10 @@ class Testimonial {
     }, this.deleteTime);
   }
 
-  existe(code) {
+  existe(code, isDelete = true) {
     const findIndex = this.codes.findIndex(item => item === code);
     if (findIndex === -1) return false;
-    this.codes.splice(findIndex, 1);
+    if (isDelete) this.codes.splice(findIndex, 1);
     return true;
   }
 }
