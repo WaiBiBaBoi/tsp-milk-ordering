@@ -19,5 +19,7 @@
     display: flex;
     align-items: flex-end;
 }
-
+.color-fff .ant-form-item-required {
+      color: #fff !important;
+  }
 

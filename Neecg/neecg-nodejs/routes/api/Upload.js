@@ -32,7 +32,8 @@ router.post('/file', upload.single('file'), (req, res) => {
   if (req.file) {
     // 文件上传成功返回信息
     // res.json({ message: '文件上传成功', file: req.file });
-    const fullUrl = req.protocol + '://' + req.get('host') + '/' + req.file.path;
+    const fullUrl = (req.protocol + '://' + req.get('host') + '/' + req.file.path).replace('/public','');
+    fullUrl
     // 返回包含完整文件路径的JSON
     res.json({ message: '文件上传成功', filePath: fullUrl });
   } else {

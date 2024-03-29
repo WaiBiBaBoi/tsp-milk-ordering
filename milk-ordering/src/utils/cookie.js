@@ -19,3 +19,8 @@ export function getCookieValue(name) {
   var cookies = getCookies(); // 使用上面的函数获取所有cookies
   return cookies[name]; // 返回特定name的cookie值
 }
+
+export function deleteCookie(name) {
+  // 设置该cookie的过期时间为当前时间之前的任意时间，这里使用UTC时间
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+}

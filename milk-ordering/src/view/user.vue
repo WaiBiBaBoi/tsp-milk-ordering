@@ -51,14 +51,14 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 20 }"
       >
-        <a-form-item label="名称" name="name" class="color-fff">
+        <a-form-item label="名称" name="name">
           <a-input v-model:value="param.name" />
         </a-form-item>
 
-        <a-form-item label="联系方式" name="phone" class="color-fff">
+        <a-form-item label="联系方式" name="phone" >
           <a-input v-model:value="param.phone" />
         </a-form-item>
-        <a-form-item label="收货地址" name="address" class="color-fff">
+        <a-form-item label="收货地址" name="address">
           <a-input v-model:value="param.address" />
         </a-form-item>
       </a-form>

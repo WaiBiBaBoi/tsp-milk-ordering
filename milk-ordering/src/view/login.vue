@@ -69,29 +69,29 @@ let codeState = ref(false)
 const formRef = ref(null);
 let rules = reactive({
   user_account: [
-    { required: true, message: "Please input your user_account!" },
+    { required: true, message: "账号不能为空" },
     {
       type: "email",
-      message: "Please input a valid email!",
+      message: "请填写邮箱账号",
       trigger: ["blur", "change"],
     },
     {
       pattern: /^[1-9][0-9]{4,}@qq\.com$/,
-      message: "Please input a valid QQ email!",
+      message: "邮箱格式需为QQ邮箱",
       trigger: ["blur", "change"],
     },
   ],
   user_password: [
-    { required: true, message: "Please input your user_password!" },
+    { required: true, message: "密码不能为空" },
     {
       min: 8,
       max: 16,
-      message: "user_password must be 8-16 characters!",
+      message: "必须为8-16个字符!",
       trigger: "blur",
     },
     {
       pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/,
-      message: "user_password must include letters and numbers!",
+      message: "必须包含字母和数字!",
       trigger: "blur",
     },
   ],
@@ -191,9 +191,5 @@ const getCode = () => {
     color: red !important;
   }
 }
-.color-fff {
-  .ant-form-item-required {
-    color: #fff !important;
-  }
-}
+
 </style>

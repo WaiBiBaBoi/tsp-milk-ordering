@@ -19,6 +19,9 @@
             <a-form-item label="路由地址" name="route_address" v-if="model.menu_type === '2'">
                 <a-input placeholder="路由地址" v-model:value="model.route_address" />
             </a-form-item>
+            <a-form-item label="排序" name="sort">
+                <a-input-number placeholder="菜单排序" style="width: 100%;" v-model:value="model.sort" :min="1" :max="999" />
+            </a-form-item>
             <a-form-item label="是否隐藏" name="hidden">
                 <a-switch v-model:checked="model.hidden" />
             </a-form-item>

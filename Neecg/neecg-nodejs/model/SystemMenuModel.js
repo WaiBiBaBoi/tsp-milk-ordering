@@ -39,6 +39,12 @@ SystemMenu.init({
         defaultValue:'',
         
     },
+    sort:{
+        // 定义 排序 字段为 数值类型
+        type:DataTypes.NUMBER,
+        defaultValue:'',
+        
+    },
     menu_type:{
         // 定义 菜单路径 字段为 字符串类型 不允许为空 
         type:DataTypes.STRING,

@@ -8,7 +8,7 @@ const routes = [
   {
     path: '/',
     name: 'system',
-    redirect: 'system/menuList',
+    redirect: 'home',
     component: () => import('@/views/index/index.vue'),
     children: [
       // {
