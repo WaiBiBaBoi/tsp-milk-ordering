@@ -26,6 +26,8 @@ const Upload = require('./routes/api/Upload');
 const Carousel = require('./routes/api/Carousel');
 const User = require('./routes/api/User');
 const Tools = require('./routes/api/Tools');
+const Product = require('./routes/api/Product');
+const Commodity = require('./routes/api/Commodity');
 
 
 // 创建Express应用
@@ -54,7 +56,7 @@ app.use(cors({
 // 设置路由以排除Token验证中间件的路径
 const excludedPaths = [
   '/api/SystmeUser/login',
-  '/api/carousel/list',
+  '/api/Carousel/list',
   '/api/Tools/email',
   '/api/User/register',
   '/api/User/login',
@@ -81,6 +83,8 @@ app.use('/api/Upload', Upload);
 app.use('/api/Carousel', Carousel);
 app.use('/api/User', User);
 app.use('/api/Tools', Tools);
+app.use('/api/Product', Product);
+app.use('/api/Commodity', Commodity);
 
 
 // 捕获404错误并转发到错误处理器
