@@ -28,7 +28,7 @@ const User = require('./routes/api/User');
 const Tools = require('./routes/api/Tools');
 const Product = require('./routes/api/Product');
 const Commodity = require('./routes/api/Commodity');
-
+const Comment = require('./routes/api/Comment');
 
 // 创建Express应用
 var app = express();
@@ -60,6 +60,11 @@ const excludedPaths = [
   '/api/Tools/email',
   '/api/User/register',
   '/api/User/login',
+  '/api/Product/getProduct',
+  '/api/Product/getProductList',
+  '/api/Product/getProductListv2',
+  '/api/Commodity/list',
+  '/api/Comment/list',
 ];
 // 自定义中间件，用于排除某些路径不用经过Token验证
 app.use((req, res, next) => {
@@ -85,6 +90,7 @@ app.use('/api/User', User);
 app.use('/api/Tools', Tools);
 app.use('/api/Product', Product);
 app.use('/api/Commodity', Commodity);
+app.use('/api/Comment', Comment);
 
 
 // 捕获404错误并转发到错误处理器
