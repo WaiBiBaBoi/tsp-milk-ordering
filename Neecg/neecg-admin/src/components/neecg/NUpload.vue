@@ -25,7 +25,7 @@ const props = defineProps({
   modelValue: String,
 });
 const emit = defineEmits(["update:modelValue"]);
-let fileList = reactive(
+let fileList = ref(
   (() => {
     if (props.modelValue) {
       let arr = props.modelValue.split(",");
@@ -44,18 +44,16 @@ let fileList = reactive(
 watch(
   () => props.modelValue,
   (newValue, oldValue) => {
-    console.log(newValue, "newValuenewValue");
     getFileList(newValue);
   }
 );
 const uploadLimit = props.limit; // 设置上传数量限制
 const getFileList = (str) => {
   if (str) {
-    console.log(fileList, "fileListfileList");
-    fileList.splice(0, fileList.length);
+    fileList.value.splice(0, fileList.value.length);
     let arr = str.split(",");
     for (let i = 0; i < arr.length; i++) {
-      fileList.push({
+      fileList.value.push({
         url: arr[i],
       });
     }
@@ -91,7 +89,6 @@ function beforeUpload(file) {
 
 function handleChange({ file, fileList: newFileList }) {
   //
-  console.log(file,'-----------------');
   if (file.status === "done") {
     // 通常服务器会在响应中返回文件信息，包括文件URL
     file.url = file.response.filePath;
@@ -99,7 +96,7 @@ function handleChange({ file, fileList: newFileList }) {
     alert(`File upload failed: ${file.name}`);
   } else if (file.status === "removed") {
   }
-  fileList.value = newFileList;
+  // fileList.value = newFileList;
   updateModelValue();
 }
 
@@ -110,7 +107,10 @@ function customUpload(options) {
   uploadAction("/upload/file", formData, onProgress)
     .then((response) => {
       console.log(response);
-
+      fileList.value.push({
+        url: response.filePath
+      });
+      updateModelValue()
       onSuccess(response, file);
     })
     .catch(onError);

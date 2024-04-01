@@ -1,19 +1,17 @@
 <template>
-  <div class="modal fade" :id="id" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog" :style="{maxWidth:width}">
+<div class="modal fade"  :id="id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">{{title}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  @click="close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">{{title}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"  @click="close"></button>
       </div>
       <div class="modal-body">
         <slot></slot>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="close">关闭</button>
-        <button type="button" class="btn btn-primary" @click="ok">确定</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  @click="close">关闭</button>
+        <button type="button" class="btn btn-primary"  @click="ok">确定</button>
       </div>
     </div>
   </div>

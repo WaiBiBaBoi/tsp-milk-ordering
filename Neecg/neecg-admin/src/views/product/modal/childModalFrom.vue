@@ -15,6 +15,9 @@
             <a-form-item label="库存" name="reserve" >
                 <a-input-number v-model:value="model.reserve" :min="1"  />
             </a-form-item>
+            <a-form-item label="上架" name="is_available" >
+                <a-switch v-model:checked="model.is_available" />
+            </a-form-item>
         </a-form>
         <template #footer>
             <a-button type="primary" style="margin-right: 8px" @click="submit">确定</a-button>
@@ -38,7 +41,6 @@ const emit = defineEmits(['childSubmitSuccess']);
 const open = ref(false);
 const form = ref(null)
 let model = reactive({
-    boutique:false,
     is_available:false
 })
 const httpUrl = reactive({

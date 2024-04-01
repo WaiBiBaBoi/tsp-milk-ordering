@@ -28,6 +28,9 @@ router.get('/list', (req, res) => {
 })
 router.get('/listAll', (req, res) => {
     Commodity.findAll({
+        where:{
+            product_id:req.query.product_id
+        },
         order: [["createdAt", "desc"]],
     }).then(result => {
         res.json({

@@ -55,7 +55,7 @@
           </div>
         </template>
         <template #expandedRowRender="{ record }">
-          <childTable :list="record.commoditys" ref="refChildTable" @childEidt="hanleCommodityEdit"></childTable>
+          <childTable :id="record.id" ref="refChildTable" @childEidt="hanleCommodityEdit"></childTable>
         </template>
         <template #expandColumnTitle>
         </template>
@@ -110,9 +110,9 @@ const hanleCommodityEdit = (record) => {
     RefChildFrom.value.showDrawer(record)
 }
 const childSubmitSuccess = () => {
-    console.log(233333);
     refChildTable.value.getList()
 }
+
 onMounted(() => {
   console.log("onMounted");
   handle.init({

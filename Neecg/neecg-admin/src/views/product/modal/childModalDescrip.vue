@@ -21,6 +21,10 @@
         <a-descriptions-item label="单价" :span="3">{{
           model.price
         }}</a-descriptions-item>
+        <a-descriptions-item label="状态" :span="3">
+        <a-tag color="green" v-if="model.is_available">上架</a-tag>
+        <a-tag color="red" v-else>下架</a-tag>
+      </a-descriptions-item>
       </a-descriptions>
       <template #footer>
         <a-button @click="hideDrawer">取消</a-button>

@@ -32,8 +32,6 @@ export function putAction(url,parameter) {
 
 //get
 export function getAction(url,parameter) {
-
-
   return axios({
     url: url,
     method: 'get',

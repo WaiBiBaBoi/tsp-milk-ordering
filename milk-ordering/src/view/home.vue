@@ -9,27 +9,26 @@
         <hr />
       </div>
       <div class="list-container row">
-        <div class="product-item col-4" v-for="item in 6" :key="item">
+        <div class="product-item col-4" v-for="(item,index) in list1" :key="index">
           <div class="card" style="width: 18rem">
-            <img src="..." class="card-img-top" alt="..." />
+            <img :src="item.image" class="card-img-top" alt="..." />
             <div class="card-body">
               <div class="flex-between" >
-                <h5 class="card-title">Card title</h5>
-                <h5 class="card-title price">￥49</h5>
+                <h5 class="card-title">{{item.product_name}}</h5>
+                <h5 class="card-title price">￥{{item.price}}</h5>
               </div>
               <p class="card-text">
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
+                {{item.text}}
               </p>
               <div class="flex-between">
-                <div>销量：999+</div>
-                <div>评论：99+</div>
+                <div>销量：{{getSales(item.sales_volume)}}</div>
+                <div>评论：{{getComments(item.comments.length)}}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="more-button">更多精品</div>
+      <div class="more-button" @click="goProduct">更多精品</div>
     </div>
     <div class="product-container container">
       <div class="title-container">
@@ -37,21 +36,20 @@
         <hr />
       </div>
       <div class="list-container row">
-        <div class="product-item col-4" v-for="item in 6" :key="item">
+        <div class="product-item col-4" v-for="(item,index) in list2" :key="index">
           <div class="card" style="width: 18rem">
-            <img src="..." class="card-img-top" alt="..." />
+            <img :src="item.image" class="card-img-top" alt="..." />
             <div class="card-body">
               <div class="flex-between" >
-                <h5 class="card-title">Card title</h5>
-                <h5 class="card-title price">￥49</h5>
+                <h5 class="card-title">{{item.product_name}}</h5>
+                <h5 class="card-title price">￥{{item.price}}</h5>
               </div>
               <p class="card-text">
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
+                {{item.text}}
               </p>
               <div class="flex-between">
-                <div>销量：999+</div>
-                <div>评论：99+</div>
+                <div>销量：{{getSales(item.sales_volume)}}</div>
+                <div>评论：{{getComments(item.comments.length)}}</div>
               </div>
             </div>
           </div>
@@ -97,15 +95,54 @@
 import { reactive,onMounted } from "vue";
 import Carousel from "../components/home-carousel.vue";
 import { httpAction, getAction } from "../api/manage.js";
-
+import { useRouter } from 'vue-router';
+const route = useRouter();
 let list1 = reactive([])
+let list2 = reactive([])
 const getList1 = () => {
-  getAction('Product/BoutiqueProduct',{}).then((res) => {
-
+  getAction('Product/getBoutiqueProduct',{}).then((res) => {
+    if(res.code === '0000'){
+      list1.splice(0,list1.length)
+      for(let i = 0; i < res.data.length; i++){
+        res.data[i].image = res.data[i].images.split(',')[0]
+        res.data[i].price = res.data[i].commoditys[0].price
+        res.data[i].text = res.data[i].commoditys[0].commodity_name
+      }
+      list1.push(...res.data)
+    }
   })
+}
+const getList2 = () => {
+  getAction('Product/getNewProductList',{}).then((res) => {
+    if(res.code === '0000'){
+      list2.splice(0,list1.length)
+      for(let i = 0; i < res.data.length; i++){
+        res.data[i].image = res.data[i].images.split(',')[0]
+        res.data[i].price = res.data[i].commoditys[0].price
+        res.data[i].text = res.data[i].commoditys[0].commodity_name
+
+      }
+      list2.push(...res.data)
+    }
+  })
+}
+const getSales = (num) => {
+  return num > 999 ? '999+' : num
+}
+const getComments = (num) => {
+  return num > 999 ? '99+' : num
+}
+const goProduct = () => {
+  const routeLocation = route.resolve({
+    path: '/product', // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
+  });
+  // 使用 window.open 打开新窗口到目标路由
+  // routeLocation.href 会给出我们基于当前路由配置解析出的完整 URL
+  window.open(routeLocation.href, '_blank');
 }
 onMounted(() => {
   getList1()
+  getList2()
 });
 </script>
 
@@ -125,6 +162,11 @@ onMounted(() => {
 .list-container {
   .product-item {
     margin-bottom: 25px;
+    cursor: pointer;
+    img{
+      height: 300px;
+      object-fit: cover;
+    }
   }
   .card {
     width: 100% !important;

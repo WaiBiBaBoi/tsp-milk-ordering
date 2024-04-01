@@ -3,12 +3,12 @@
     <div class="product-info-container">
       <div class="row">
         <div class="col-6 carousel-container">
-          <Carousel></Carousel>
+          <Carousel :list="product.images"></Carousel>
         </div>
         <div class="col-6">
           <div class="flex-align-between">
             <div class="product-info">
-              <h4>伊利纯牛奶</h4>
+              <h4>{{product.product_name}}</h4>
               <p>整箱250ml*21盒 全脂牛奶 优质乳蛋白早餐伴侣 礼盒装</p>
               <h4 class="price">￥49</h4>
               <div class="product-style">
@@ -57,8 +57,8 @@
                 </div>
                 <div
                   class="add-button"
-                  data-toggle="modal"
-                  data-target="#add-order-modal"
+                  data-bs-toggle="modal"
+                  data-bs-target="#add-order-modal"
                 >
                   立即购买
                 </div>
@@ -133,14 +133,18 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive,onMounted } from "vue";
 import Carousel from "../components/details-carousel.vue";
 import modal from "../components/modal.vue";
+import { httpAction, getAction } from "../api/manage.js";
+import { useRoute } from 'vue-router';
+const route = useRoute();
 let orderInfoParam = reactive({
   name: "",
   phone: "",
   address: "",
 });
+let product = reactive({})
 let orderInfoRules = reactive({
   name: [
     {
@@ -175,6 +179,22 @@ const orderInfoFinish = (values) => {
 const orderInfoFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
+const getProduct = () => {
+  getAction('Product/getProduct',{
+    id:route.query.productid
+  }).then((res) => {
+    if(res.code === '0000'){
+      res.data.images = res.data.images.split(',')
+      for(let key in res.data){
+        product[key] = res.data[key]
+      }
+      console.log(product);
+    }
+  })
+}
+onMounted(() => {
+  getProduct()
+})
 </script>
 
 <style lang="less" scoped>

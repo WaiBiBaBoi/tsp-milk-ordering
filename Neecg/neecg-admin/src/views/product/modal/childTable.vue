@@ -54,13 +54,15 @@ const columns = [
   },
 ];
 const props = defineProps({
-  list: Array,
+  id: String,
 });
 const emit = defineEmits(['childEidt'])
 let data = reactive([]);
 const RefChildDescrip = ref(null)
 const getList = () => {
-  getAction("Commodity/listAll", {}).then((res) => {
+  getAction("Commodity/listAll", {
+    product_id:props.id
+  }).then((res) => {
     if (res.code === "0000") {
         data.splice(0, data.length, ...res.data);
     }
