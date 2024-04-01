@@ -57,7 +57,7 @@ router.get("/getBoutiqueProduct", (req, res) => {
 
 // 最新上架产品
 router.get("/getNewProductList", (req, res) => {
-  Product.findAndCountAll({
+  Product.findAll({
     limit: 6,
     include: [
       {
