@@ -24,12 +24,7 @@ Product.hasMany(Comment, {
 
 // 严选优质
 router.get("/getBoutiqueProduct", (req, res) => {
-  let { limit, offset } = getPagination(req.query.pageNo, req.query.pageSize);
-  delete req.query.pageNo;
-  delete req.query.pageSize;
-  Product.findAndCountAll({
-    limit: limit,
-    offset: offset,
+  Product.findAll({
     where: {
       boutique: true
     },
@@ -44,6 +39,38 @@ router.get("/getBoutiqueProduct", (req, res) => {
         as: "comments",
       },
     ],
+  }).then((result) => {
+    res.json({
+      code: "0000",
+      message: "查询成功",
+      data: result,
+    });
+  }).catch((err) => {
+    res.json({
+      code: "500",
+      message: "操作异常",
+      data: err,
+    });
+  });
+});
+
+// 最新上架产品
+router.get("/getNewProductList", (req, res) => {
+  Product.findAndCountAll({
+    include: [
+      {
+        model: Commodity,
+        as: "commoditys",
+      },
+      {
+        model: Comment,
+        attributes: ["id"],
+        as: "comments",
+      },
+    ],
+    order: [
+      ['createdAt', 'desc'],
+    ]
   }).then((result) => {
     res.json({
       code: "0000",
@@ -141,26 +168,6 @@ router.get("/getProduct", (req, res) => {
       data: err,
     });
   });
-});
-router.get("/BoutiqueProduct", (req, res) => {
-  Product.findAll({
-    where:{
-      boutique:true
-    },
-    order: [["createdAt", "desc"]],
-}).then(result => {
-    res.json({
-        code: '0000',
-        message: '获取成功',
-        data: result
-    })
-}).catch(err => {
-    res.json({
-        code: '500',
-        message: '操作异常',
-        data: err
-    })
-})
 });
 
 router.get("/list", (req, res) => {
