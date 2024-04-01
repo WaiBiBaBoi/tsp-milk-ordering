@@ -25,6 +25,7 @@ Product.hasMany(Comment, {
 // 严选优质
 router.get("/getBoutiqueProduct", (req, res) => {
   Product.findAll({
+    limit: 6,
     where: {
       boutique: true
     },
@@ -57,6 +58,7 @@ router.get("/getBoutiqueProduct", (req, res) => {
 // 最新上架产品
 router.get("/getNewProductList", (req, res) => {
   Product.findAndCountAll({
+    limit: 6,
     include: [
       {
         model: Commodity,
