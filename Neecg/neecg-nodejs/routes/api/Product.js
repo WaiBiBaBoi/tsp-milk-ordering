@@ -111,6 +111,9 @@ router.get("/getProductList", (req, res) => {
     include: [
       {
         model: Commodity,
+        where: {
+          is_available: true
+        },
         as: "commoditys",
       },
       {
@@ -121,9 +124,9 @@ router.get("/getProductList", (req, res) => {
     ],
     order: [
       // 这里可以指定如何排序
-      [{ model: Commodity, as: 'commoditys' }, 'createdAt', 'desc'], // 按订单日期降序
-      [{ model: Comment, as: 'comments' }, 'createdAt', 'desc']  // 如果日期相同，则按金额升序
-  ]
+      [{ model: Commodity, as: 'commoditys' }, 'createdAt', 'desc'],
+      [{ model: Comment, as: 'comments' }, 'createdAt', 'desc']
+    ]
   }).then((result) => {
     res.json({
       code: "0000",
