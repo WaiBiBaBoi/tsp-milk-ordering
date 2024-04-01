@@ -3,20 +3,17 @@
         placement="right" @after-open-change="afterOpenChange">
         <a-form ref="form" :model="model" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
             autocomplete="off" :rules="rules" labelAlign="right" >
-            <a-form-item label="产品名称" name="product_name">
-                <a-input placeholder="产品名称" v-model:value="model.product_name" />
+            <a-form-item label="商品名称" name="product_name">
+                <a-input placeholder="商品名称" v-model:value="model.commodity_name" />
             </a-form-item>
-            <a-form-item label="产品简介" name="introduction" >
-                <a-textarea v-model:value="model.introduction" placeholder="产品简介" :rows="4" />
+            <a-form-item label="商品简介" name="introduction" >
+                <a-textarea v-model:value="model.introduction" placeholder="商品简介" :rows="4" />
             </a-form-item>
-            <a-form-item label="优选" name="boutique" >
-                <a-switch v-model:checked="model.boutique" />
+            <a-form-item label="单价" name="price" >
+                <a-input-number v-model:value="model.price" :min="1"  />
             </a-form-item>
-            <a-form-item label="上架" name="is_available" >
-                <a-switch v-model:checked="model.is_available" />
-            </a-form-item>
-            <a-form-item label="图片" name="image" >
-                <n-upload :limit="5"  v-model="model.images" ></n-upload>
+            <a-form-item label="库存" name="reserve" >
+                <a-input-number v-model:value="model.reserve" :min="1"  />
             </a-form-item>
         </a-form>
         <template #footer>
@@ -29,24 +26,24 @@
 <script setup>
 import { ref, reactive, defineEmits } from 'vue';
 import { httpAction } from '@/api/manage.js'
+import { message } from 'ant-design-vue';
 // const props = defineProps({
 //   title: {
 //     type: String,
 //     default: "Basic Drawer"
 //   },
 // })
-const emit = defineEmits(['submitSuccess']);
+let title = ref('')
+const emit = defineEmits(['childSubmitSuccess']);
 const open = ref(false);
 const form = ref(null)
-import { message } from 'ant-design-vue';
-let title = ref('')
 let model = reactive({
     boutique:false,
     is_available:false
 })
 const httpUrl = reactive({
-    add: 'Product/add',
-    edit: 'Product/edit'
+    add: 'Commodity/add',
+    edit: 'Commodity/edit'
 })
 const rules = reactive({
     // title: [{ required: true, message: '请填写角色名称' }],
@@ -72,10 +69,10 @@ const showDrawer = (param = {}) => {
 
     if (param.id) {
         edit(param)
-        title.value = '编辑产品'
+        title.value = '编辑商品'
     } else {
         add(param)
-        title.value = '添加产品'
+        title.value = '添加商品'
     }
 };
 const add = (param) => {
@@ -107,7 +104,7 @@ const submit = () => {
                 }else{
                     message.success('添加成功')
                 }
-                emit('submitSuccess')
+                emit('childSubmitSuccess')
             }
         }).catch(err => {
             console.log(err);

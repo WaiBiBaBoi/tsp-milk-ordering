@@ -1,6 +1,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { httpAction, getAction } from '@/api/manage.js'
 import { proxyToObject } from '@/utils/proxyToObject'
+import { message } from 'ant-design-vue';
 
 
 
@@ -58,11 +59,13 @@ export function Composable() {
     }
 
     const handleDelete = (record) => {
+        console.log(httpUrl.delete);
         httpAction(httpUrl.delete, {
             id: record.id
         }, 'delete').then(result => {
             if (result) {
                 handleList()
+                message.success('删除成功')
             }
         }).catch(err => {
             console.log(err);

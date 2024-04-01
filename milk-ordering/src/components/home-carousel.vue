@@ -1,70 +1,68 @@
 <template>
-  <div
-        id="carouselExampleCaptions"
-        class="carousel slide"
-        data-ride="carousel"
+  <div id="dynamic-carousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button
+        type="button"
+        v-for="(item, index) in list"
+        :key="'indicator-' + item.id"
+        :data-bs-target="'#dynamic-carousel'"
+        :data-bs-slide-to="index"
+        :class="{ active: index === 0 }"
+        :aria-label="'Slide ' + (index + 1)"
+      ></button>
+    </div>
+    <div class="carousel-inner">
+      <div
+        class="carousel-item"
+        v-for="(item, index) in list"
+        :key="'slide-' + item.id"
+        :class="{ active: index === 0 }"
       >
-        <ol class="carousel-indicators">
-          <li
-            data-target="#carouselExampleCaptions"
-            data-slide-to="0"
-            class="active"
-          ></li>
-          <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
-          <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="..." class="d-block w-100" alt="..." />
-            <div class="carousel-caption d-none d-md-block">
-              <h5>First slide label</h5>
-              <p>
-                Some representative placeholder content for the first slide.
-              </p>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <img src="..." class="d-block w-100" alt="..." />
-            <div class="carousel-caption d-none d-md-block">
-              <h5>Second slide label</h5>
-              <p>
-                Some representative placeholder content for the second slide.
-              </p>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <img src="..." class="d-block w-100" alt="..." />
-            <div class="carousel-caption d-none d-md-block">
-              <h5>Third slide label</h5>
-              <p>
-                Some representative placeholder content for the third slide.
-              </p>
-            </div>
-          </div>
+        <img :src="item.image" class="d-block w-100" :alt="'Slide ' + (index + 1)">
+        <!-- Optional captions -->
+        <div class="carousel-caption d-none d-md-block">
+          <h5>{{ item.caption }}</h5>
+          <p>{{ item.description }}</p>
         </div>
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-target="#carouselExampleCaptions"
-          data-slide="prev"
-        >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </button>
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-target="#carouselExampleCaptions"
-          data-slide="next"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </button>
       </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#dynamic-carousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#dynamic-carousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 </template>
 
 <script setup>
+import {ref,reactive,onMounted} from 'vue'
+import { httpAction, getAction } from "../api/manage.js";
 
+let list = reactive([])
+let sliding = ref(null)
+let slide = ref(0);
+const getList = () => {
+  getAction('Carousel/listAll',{}).then((res) => {
+    if(res.code === '0000'){
+      list.splice(0,list.length)
+      list.push(...res.data)
+      console.log(list);
+    }
+  })
+}
+const onSlideStart = () => {
+  sliding.value = true
+}
+const onSlideEnd = () => {
+  sliding.value = false
+
+}
+onMounted(() => {
+  getList()
+})
 </script>
 
 <style lang="less" scoped>

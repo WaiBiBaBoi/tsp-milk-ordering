@@ -56,7 +56,7 @@ app.use(cors({
 // 设置路由以排除Token验证中间件的路径
 const excludedPaths = [
   '/api/SystmeUser/login',
-  '/api/Carousel/list',
+  '/api/Carousel/listAll',
   '/api/Tools/email',
   '/api/User/register',
   '/api/User/login',

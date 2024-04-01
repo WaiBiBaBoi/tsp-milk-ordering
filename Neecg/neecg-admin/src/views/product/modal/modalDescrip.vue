@@ -8,18 +8,23 @@
     placement="right"
     @after-open-change="afterOpenChange"
   >
-    <a-descriptions  layout="vertical" bordered>
-      <a-descriptions-item label="Product">Cloud Database</a-descriptions-item>
-      <a-descriptions-item label="Billing Mode">Prepaid</a-descriptions-item>
-      <a-descriptions-item label="Automatic Renewal">YES</a-descriptions-item>
-      <a-descriptions-item label="Order time"
-        >2018-04-24 18:00:00</a-descriptions-item
-      >
-      <a-descriptions-item label="Usage Time" :span="2"
-        >2019-04-24 18:00:00</a-descriptions-item
-      >
-      <a-descriptions-item label="Status" :span="3">
-        <a-badge status="processing" text="Running" />
+    <a-descriptions layout="vertical" bordered>
+      <a-descriptions-item label="产品名称" :span="3">{{
+        model.product_name
+      }}</a-descriptions-item>
+      <a-descriptions-item label="产品简介" :span="3">{{
+        model.introduction
+      }}</a-descriptions-item>
+      <a-descriptions-item label="优选" :span="3">
+        <a-tag color="green" v-if="model.boutique">开启</a-tag>
+        <a-tag color="red" v-else>未开启</a-tag>
+      </a-descriptions-item>
+      <a-descriptions-item label="状态" :span="3">
+        <a-tag color="green" v-if="model.is_available">上架</a-tag>
+        <a-tag color="red" v-else>下架</a-tag>
+      </a-descriptions-item>
+      <a-descriptions-item label="图片" :span="3">
+        <a-image :width="200" :src="item" v-for="(item,index) in images" :key="index" />
       </a-descriptions-item>
     </a-descriptions>
     <template #footer>
@@ -34,12 +39,13 @@ import { httpAction } from "@/api/manage.js";
 const props = defineProps({
   title: {
     type: String,
-    default: "Basic Drawer"
+    default: "产品详情",
   },
-})
+});
+let model = reactive();
+let images = reactive([])
 const emit = defineEmits(["submitSuccess"]);
 const open = ref(false);
-
 const afterOpenChange = (bool) => {
   console.log("open", bool);
   if (!bool) {
@@ -57,6 +63,9 @@ const hideDrawer = () => {
 };
 const showDrawer = (param = {}) => {
   model = Object.assign({}, param);
+  images.splice(0,images.length)
+  images.push(...model.images.split(','))
+  console.log(images);
   open.value = true;
 };
 

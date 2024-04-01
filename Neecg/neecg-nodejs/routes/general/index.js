@@ -17,7 +17,8 @@ const General = (model) => {
         model.findAndCountAll({
             limit: limit,
             offset: offset,
-            where: whereCondition
+            where: whereCondition,
+            order: [["createdAt", "asc"]],
         }).then(result => {
             if (callback == undefined) {
                 res.json({
