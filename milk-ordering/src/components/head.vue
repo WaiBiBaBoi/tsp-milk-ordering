@@ -57,13 +57,17 @@ onMounted(() => {
 <style lang="less" scoped>
 .head-container {
   height: 60px;
-  background: var(--theme-black);
+  // background: var(--theme-black);
+  background: rgb(255, 255, 255);
   width: 100%;
-  color: #fff;
+  color: var(--theme-black);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 99;
+  box-sizing: border-box;
+  // border-bottom: 1px solid var(--theme-black);
+  box-shadow: 0 0px 15px 3px rgb(51, 51, 51);
 }
 .container {
   padding: 0;
@@ -80,12 +84,12 @@ onMounted(() => {
 }
 .user{
   position: absolute;
-  right: 20px;
+  right: 10%;
   .op-item{
     font-size: 14px;
     margin-left: 12px;
     cursor: pointer;
-    color: #FFF;
+    color: var(--theme-black);
   }
   .op-item:active{
     color: #1677ff;

@@ -142,6 +142,26 @@ router.get("/getProduct", (req, res) => {
     });
   });
 });
+router.get("/BoutiqueProduct", (req, res) => {
+  Product.findAll({
+    where:{
+      boutique:true
+    },
+    order: [["createdAt", "desc"]],
+}).then(result => {
+    res.json({
+        code: '0000',
+        message: '获取成功',
+        data: result
+    })
+}).catch(err => {
+    res.json({
+        code: '500',
+        message: '操作异常',
+        data: err
+    })
+})
+});
 
 router.get("/list", (req, res) => {
   list(req, res);
