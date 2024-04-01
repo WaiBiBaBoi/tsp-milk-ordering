@@ -105,6 +105,7 @@ router.get("/getProductList", (req, res) => {
     return acc;
   }, {});
   Product.findAndCountAll({
+    distinct: true,
     limit: limit,
     offset: offset,
     where: whereCondition,
