@@ -94,9 +94,19 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { reactive,onMounted } from "vue";
 import Carousel from "../components/home-carousel.vue";
-onMounted(() => {});
+import { httpAction, getAction } from "../api/manage.js";
+
+let list1 = reactive([])
+const getList1 = () => {
+  getAction('Product/BoutiqueProduct',{}).then((res) => {
+
+  })
+}
+onMounted(() => {
+  getList1()
+});
 </script>
 
 <style lang="less" scoped>

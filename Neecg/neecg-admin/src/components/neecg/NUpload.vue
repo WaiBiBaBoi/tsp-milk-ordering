@@ -14,7 +14,7 @@
 </template>
   
   <script setup>
-import { ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { uploadAction } from "@/api/manage";
 
 const props = defineProps({
@@ -25,14 +25,14 @@ const props = defineProps({
   modelValue: String,
 });
 const emit = defineEmits(["update:modelValue"]);
-const fileList = ref(
+let fileList = reactive(
   (() => {
     if (props.modelValue) {
       let arr = props.modelValue.split(",");
       let result = [];
-      for (let i = 0; i > arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         result.push({
-          url: result[i],
+          url: arr[i],
         });
       }
       return result;
@@ -41,14 +41,33 @@ const fileList = ref(
     }
   })()
 );
+watch(
+  () => props.modelValue,
+  (newValue, oldValue) => {
+    console.log(newValue, "newValuenewValue");
+    getFileList(newValue);
+  }
+);
 const uploadLimit = props.limit; // 设置上传数量限制
+const getFileList = (str) => {
+  if (str) {
+    console.log(fileList, "fileListfileList");
+    fileList.splice(0, fileList.length);
+    let arr = str.split(",");
+    for (let i = 0; i < arr.length; i++) {
+      fileList.push({
+        url: arr[i],
+      });
+    }
+  }
+};
 const updateModelValue = () => {
   // 仅当路径数组变更时更新父组件的v-model绑定值
-  let arr = []
-  for(let i = 0; i < fileList.value.length; i++){
-    arr.push(fileList.value[i].url)
- }
-  emit('update:modelValue',arr.join(','));
+  let arr = [];
+  for (let i = 0; i < fileList.value.length; i++) {
+    arr.push(fileList.value[i].url);
+  }
+  emit("update:modelValue", arr.join(","));
 };
 function beforeUpload(file) {
   if (fileList.value.length >= uploadLimit) {
@@ -72,6 +91,7 @@ function beforeUpload(file) {
 
 function handleChange({ file, fileList: newFileList }) {
   //
+  console.log(file,'-----------------');
   if (file.status === "done") {
     // 通常服务器会在响应中返回文件信息，包括文件URL
     file.url = file.response.filePath;
@@ -80,7 +100,7 @@ function handleChange({ file, fileList: newFileList }) {
   } else if (file.status === "removed") {
   }
   fileList.value = newFileList;
-  updateModelValue()
+  updateModelValue();
 }
 
 function customUpload(options) {
