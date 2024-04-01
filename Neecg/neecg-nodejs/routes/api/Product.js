@@ -33,6 +33,9 @@ router.get("/getBoutiqueProduct", (req, res) => {
       {
         model: Commodity,
         as: "commoditys",
+        where: {
+          is_available: true
+        }
       },
       {
         model: Comment,
@@ -63,6 +66,9 @@ router.get("/getNewProductList", (req, res) => {
       {
         model: Commodity,
         as: "commoditys",
+        where: {
+          is_available: true
+        }
       },
       {
         model: Comment,

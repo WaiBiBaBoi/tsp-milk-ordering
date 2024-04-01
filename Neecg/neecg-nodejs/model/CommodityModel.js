@@ -4,6 +4,7 @@
  * commodity_name: string
  * introduction: text // 简介
  * price: DECIMAL
+ * is_available: boolean // 商品是否上架
  * reserve: boolean // 库存
  */
 
@@ -39,6 +40,10 @@ Commodity.init({
     price: {
       type: DataTypes.DECIMAL,
       allowNull: false
+    },
+    is_available: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     },
     reserve: {
       type: DataTypes.BOOLEAN,
