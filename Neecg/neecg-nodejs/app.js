@@ -62,7 +62,7 @@ const excludedPaths = [
   '/api/User/login',
   '/api/Product/getProduct',
   '/api/Product/getProductList',
-  '/api/Product/getProductListv2',
+  '/api/Product/getBoutiqueProduct',
   '/api/Commodity/list',
   '/api/Comment/list',
 ];

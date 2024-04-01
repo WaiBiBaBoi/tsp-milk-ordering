@@ -22,14 +22,17 @@ Product.hasMany(Comment, {
   as: "comments",
 });
 
-router.get("/getProductListv2", (req, res) => {
+// 严选优质
+router.get("/getBoutiqueProduct", (req, res) => {
   let { limit, offset } = getPagination(req.query.pageNo, req.query.pageSize);
   delete req.query.pageNo;
   delete req.query.pageSize;
-  Product.findAll({
+  Product.findAndCountAll({
     limit: limit,
     offset: offset,
-    where: req.body,
+    where: {
+      boutique: true
+    },
     include: [
       {
         model: Commodity,
@@ -122,6 +125,9 @@ router.get("/getProduct", (req, res) => {
         as: "comments",
       },
     ],
+    order: [
+      [{ model: Comment,as: 'comments' }, 'createdAt', 'desc'] // 按最新评论来排序
+    ]
   }).then((result) => {
     res.json({
       code: "0000",
