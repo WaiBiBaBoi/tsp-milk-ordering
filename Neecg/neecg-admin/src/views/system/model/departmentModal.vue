@@ -4,8 +4,8 @@
 
         <a-form ref="form" :model="model" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
             autocomplete="off" :rules="rules" labelAlign="right" >
-            <a-form-item label="角色名称" name="role_name">
-                <a-input placeholder="角色名称" v-model:value="model.role_name" />
+            <a-form-item label="部门名称" name="department_name">
+                <a-input placeholder="部门名称" v-model:value="model.department_name" />
             </a-form-item>
             <a-form-item label="备注" name="remark" >
                 <a-textarea v-model:value="model.remark" placeholder="备注" :rows="4" />
@@ -27,15 +27,13 @@ import { httpAction } from '@/api/manage.js'
 const emit = defineEmits(['submitSuccess']);
 const open = ref(false);
 const form = ref(null)
-let model = reactive({
-    is_protected:false
-})
+let model = reactive({})
 const httpUrl = reactive({
-    add: 'SystemRole/add',
-    edit: 'SystemRole/edit'
+    add: 'SystemDepartment/add',
+    edit: 'SystemDepartment/edit'
 })
 const rules = reactive({
-    role_name: [{ required: true, message: '请填写角色名称' }],
+    department_name: [{ required: true, message: '请填写部门名称' }],
     // remark: [{ required: true, message: '请填写用户账号' }],
     
 })
@@ -67,7 +65,7 @@ const add = (param) => {
     open.value = true;
 }
 const edit = (param) => {
-    model = Object.assign(model, param)
+    model = Object.assign({}, param)
     open.value = true;
 }
 

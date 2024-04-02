@@ -75,6 +75,11 @@ const columns = [
         key: 'user_role',
     },
     {
+        title:'用户部门',
+        dataIndex:'department_name',
+        key: 'department_name',
+    },
+    {
         title: '操作',
         dataIndex: 'operation',
         key: 'operation',

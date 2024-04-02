@@ -57,6 +57,11 @@ Product.init({
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
+    department_id: {
+      // 定义 用户部门 字段为 字符串类型  不允许为空
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
     product_name: {
       type: DataTypes.STRING,
     },

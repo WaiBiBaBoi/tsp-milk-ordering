@@ -22,6 +22,7 @@ const SystemRole = require('./routes/api/SystemRole');
 const SystemPermission = require('./routes/api/SystemPermission');
 const SystemDataDict = require('./routes/api/SystemDataDict');
 const SystemDataDictConfig = require('./routes/api/SystemDataDictConfig');
+const SystemDepartment = require('./routes/api/SystemDepartment');
 const Upload = require('./routes/api/Upload');
 const Carousel = require('./routes/api/Carousel');
 const User = require('./routes/api/User');
@@ -61,7 +62,6 @@ const excludedPaths = [
   '/api/User/register',
   '/api/User/login',
   '/api/Product/getProduct',
-  '/api/Product/getProductList',
   '/api/Product/getBoutiqueProduct',
   '/api/Product/getNewProductList',
   '/api/Commodity/list',
@@ -76,6 +76,20 @@ app.use((req, res, next) => {
   // 否则使用自定义的JWT Token验证中间件
   return JwtTokenmidd(req, res, next)
 });
+const verifyPaths = [
+  '/api/Product/getProductList',
+]
+// 自定义中间件，用于校验某些路径请求传入的部门ID
+app.use((req,res,next) => {
+  if(verifyPaths.includes(req.path)){
+    if(!req.user.is_protected){
+      // 如果需要，并且不是特权部门则只能获取到对应部门的数据
+      req.query.department_id = req.user.department_id
+      return next()
+    }
+  }
+  return next()
+})
 
 // 使用路由中间件，将特定的URL映射到对应的路由文件中
 app.use('/api/System', System);
@@ -85,6 +99,7 @@ app.use('/api/SystemRole', SystemRole);
 app.use('/api/SystemPermission', SystemPermission);
 app.use('/api/SystemDataDict', SystemDataDict);
 app.use('/api/SystemDataDictConfig', SystemDataDictConfig);
+app.use('/api/SystemDepartment', SystemDepartment);
 app.use('/api/Upload', Upload);
 app.use('/api/Carousel', Carousel);
 app.use('/api/User', User);

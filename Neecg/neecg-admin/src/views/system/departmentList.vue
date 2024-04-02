@@ -4,23 +4,18 @@
             <a-form layout="horizontal" :model="data.queryParam">
                 <a-row :gutter="[16, 24]">
                     <a-col class="gutter-row" :span="6">
-                        <a-form-item label="菜单名称">
-                            <a-input style="width: 100%;" v-model:value="data.queryParam.menu_name"
-                                placeholder="菜单名称" />
+                        <a-form-item label="部门名称">
+                            <a-input style="width: 100%;" v-model:value="data.queryParam.department_name"
+                                placeholder="部门名称" />
                         </a-form-item>
                     </a-col>
                     <a-col class="gutter-row" :span="6">
-                        <a-form-item label="菜单路径">
-                            <a-input style="width: 100%;" v-model:value="data.queryParam.menu_address"
-                                placeholder="菜单路径" />
+                        <a-form-item label="备注">
+                            <a-input style="width: 100%;" v-model:value="data.queryParam.remark"
+                                placeholder="备注" />
                         </a-form-item>
                     </a-col>
-                    <a-col class="gutter-row" :span="6">
-                        <a-form-item label="路由地址">
-                            <a-input style="width: 100%;" v-model:value="data.queryParam.route_address"
-                                placeholder="路由地址" />
-                        </a-form-item>
-                    </a-col>
+                    
                 </a-row>
             </a-form>
         </div>
@@ -28,6 +23,7 @@
             <a-button type="primary" @click="handle.handleAdd">新增</a-button>
             <a-button type="primary" style="margin-left: 8px;" @click="handle.handleList">查询</a-button>
             <a-button type="primary" style="margin-left: 8px;" @click="handle.reset">重置</a-button>
+
         </div>
         <div class="neecg-table-box">
             <a-table :rowKey="record => record.id" 
@@ -35,7 +31,7 @@
                 :columns="columns" 
                 :data-source="data.tableData" 
                 :row-selection="data.rowSelection" 
-                :pagination="false"
+                :pagination="data.pagination"
                 @change="handle.paginationChange">
                 <template v-slot:operation="{ record }">
                     <div class="operation">
@@ -43,36 +39,30 @@
                         <a-popconfirm title="确定要删除吗？" ok-text="是" cancel-text="否" @confirm="handle.handleDelete(record)">
                             <a-button type="link">删除</a-button>
                         </a-popconfirm>
-                        <a-button type="link" @click="handle.handleAddChild(record)" v-if="record.menu_type == 1">添加下级</a-button>
                     </div>
                 </template>
             </a-table>
         </div>
-        <menu-modal ref="modalForm" @submitSuccess="handle.submitSuccess"></menu-modal>
+        <role-modal ref="modalForm" @submitSuccess="handle.submitSuccess"></role-modal>
     </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import menuModal from './model/menuModal.vue'
+import roleModal from './model/departmentModal.vue'
 import { httpAction,getAction } from '@/api/manage.js'
 import {Composable} from '@/composable/TableComposable'
 const {data,handle} = Composable()
 const columns = [
     {
-        title: '菜单名称',
-        dataIndex: 'menu_name',
-        key: 'menu_name',
+        title: '角色名称',
+        dataIndex: 'department_name',
+        key: 'department_name',
     },
     {
-        title: '菜单路径',
-        dataIndex: 'menu_address',
-        key: 'menu_address',
-    },
-    {
-        title: '路由地址',
-        dataIndex: 'route_address',
-        key: 'route_address',
+        title: '备注',
+        dataIndex: 'remark',
+        key: 'remark',
     },
     {
         title: '操作',
@@ -83,10 +73,14 @@ const columns = [
     },
 ];
 const modalForm = ref(null)
+const modalRoute = ref(null)
 const httpUrl = reactive({
-    list:'SystemMenu/list',
-    delete:'SystemMenu/delete'
+    list:'SystemDepartment/list',
+    delete:'SystemDepartment/delete'
 })
+const handleAuthorization = (record) => {
+    modalRoute.value.showDrawer(record)
+}
 onMounted(() => {
     console.log('onMounted');
     handle.init({

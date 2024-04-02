@@ -11,7 +11,7 @@
       :value="item.id"
       v-for="(item, index) in list"
       :key="index"
-      >{{ item.role_name }}</a-select-option
+      >{{ item[props.label] }}</a-select-option
     >
   </a-select>
 </template>
@@ -22,7 +22,8 @@ import { selectList } from "@/api/api";
 const props = defineProps({
   dict: String,
   modelValue: String,
-  placeholder:String
+  placeholder:String,
+  label:String
 });
 // 使用 defineEmits 定义事件
 const emit = defineEmits(["update:modelValue"]);
@@ -49,7 +50,10 @@ selectList({ dict: props.dict })
 // 创建计算属性，绑定本地值和父组件的 v-model
 const localValue = computed({
   get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
+  set: (value) =>{
+    console.log(value);
+    emit("update:modelValue", value)
+  },
 });
 </script>
 

@@ -8,51 +8,54 @@
         <div class="col-6">
           <div class="flex-align-between">
             <div class="product-info">
-              <h4>{{product.product_name}}</h4>
-              <p>整箱250ml*21盒 全脂牛奶 优质乳蛋白早餐伴侣 礼盒装</p>
-              <h4 class="price">￥49</h4>
+              <h4>{{ product.product_name }}</h4>
+              <p>{{ product.text }}</p>
+              <h4 class="price">￥{{ product.price }}</h4>
               <div class="product-style">
-                <div class="style-item" v-for="item in 5" :key="item">
-                  【镇店爆款】2{{ item }}盒纯牛奶
+                <div
+                  class="style-item"
+                  :class="index === commoditysActive ? 'commoditysActive' : ''"
+                  v-for="(item, index) in product.commoditys"
+                  :key="item"
+                  @click="changeCommoditys(item, index)"
+                >
+                  {{ item.commodity_name }}
                 </div>
               </div>
             </div>
             <div>
-              <div style="padding-bottom: 12px">
-                <span>销量：999+</span>
-                <span>库存：有货</span>
+              <div style="padding-bottom: 12px; font-size: 14px">
+                <span style="margin-right: 12px"
+                  >销量：{{ getSales(product.sales_volume) }}；</span
+                >
+                <span>库存：{{product.reserve ? '有货' : '暂时缺货'}}；</span>
               </div>
               <div style="display: flex">
                 <div style="width: 160px; margin-right: 15px">
                   <div class="input-group">
-                    <div class="input-group-prepend" style="width: 40px">
-                      <button
-                        style="width: 100%"
-                        class="btn btn-outline-secondary"
-                        type="button"
-                        id="button-addon1"
-                      >
-                        -
-                      </button>
-                    </div>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      id="button-addon1"
+                      style="width: 40px"
+                    >
+                      -
+                    </button>
                     <input
-                      style="text-align: center"
                       type="text"
                       class="form-control"
                       placeholder=""
                       aria-label="Example text with button addon"
                       aria-describedby="button-addon1"
                     />
-                    <div class="input-group-append" style="width: 40px">
-                      <button
-                        style="width: 100%"
-                        class="btn btn-outline-secondary"
-                        type="button"
-                        id="button-addon2"
-                      >
-                        +
-                      </button>
-                    </div>
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      id="button-addon2"
+                      style="width: 40px"
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
                 <div
@@ -70,12 +73,12 @@
     </div>
     <div class="title-container flex-between">
       <div class="text">购买评论</div>
-      <div><span class="num">224</span> 条</div>
+      <div><span class="num">{{commentsLength(product.comments)}}</span> 条</div>
     </div>
     <hr />
     <div class="comment-container">
       <div class="list">
-        <div class="item" v-for="item in 10" :key="item">
+        <div class="item" v-for="item in product.comments" :key="item">
           <div class="media">
             <img src="..." class="align-self-start mr-3" alt="..." />
             <div class="media-body">
@@ -94,15 +97,7 @@
       </div>
     </div>
     <div class="pagination-container">
-      <nav aria-label="Page navigation example">
-        <ul class="pagination">
-          <li class="page-item"><a class="page-link" href="#">首页</a></li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">尾页</a></li>
-        </ul>
-      </nav>
+      <a-pagination v-if="commentsParam.pageSiz > 10"  v-model:current="commentsParam.pageNo" @change="pageNoChange" :total="commentsParam.pageSize" show-less-items  />
     </div>
     <modal id="add-order-modal" title="填写订单信息" width="600px">
       <a-form
@@ -133,18 +128,24 @@
 </template>
 
 <script setup>
-import { ref, reactive,onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import Carousel from "../components/details-carousel.vue";
 import modal from "../components/modal.vue";
 import { httpAction, getAction } from "../api/manage.js";
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 const route = useRoute();
 let orderInfoParam = reactive({
   name: "",
   phone: "",
   address: "",
 });
-let product = reactive({})
+let commentsParam = {
+  product_name:'',
+  pageNo:1,
+  pageSize:10
+}
+let product = reactive({});
+let commoditysActive = ref(0);
 let orderInfoRules = reactive({
   name: [
     {
@@ -179,22 +180,42 @@ const orderInfoFinish = (values) => {
 const orderInfoFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
-const getProduct = () => {
-  getAction('Product/getProduct',{
-    id:route.query.productid
-  }).then((res) => {
-    if(res.code === '0000'){
-      res.data.images = res.data.images.split(',')
-      for(let key in res.data){
-        product[key] = res.data[key]
-      }
-      console.log(product);
-    }
-  })
+const getSales = (num) => {
+  return num > 999 ? "999+" : num;
+};
+const changeCommoditys = (item, index) => {
+  if (index === commoditysActive) return;
+  commoditysActive = index;
+  product.price = item.price;
+  product.text = item.commodity_name;
+  product.reserve = item.reserve;
+};
+const commentsLength = (arr) => {
+  return arr ? arr.length : 0
 }
+const pageNoChange = (e) => {
+  commentsParam.pageNo = e
+}
+const getProduct = () => {
+  getAction("Product/getProduct", {
+    id: route.query.productid,
+  }).then((res) => {
+    if (res.code === "0000") {
+      res.data.images = res.data.images.split(",");
+      for (let key in res.data) {
+        product[key] = res.data[key];
+      }
+      product.price = res.data.commoditys[0].price;
+      product.text = res.data.commoditys[0].commodity_name;
+      product.reserve = res.data.commoditys[0].reserve;
+
+      console.log();
+    }
+  });
+};
 onMounted(() => {
-  getProduct()
-})
+  getProduct();
+});
 </script>
 
 <style lang="less" scoped>
@@ -221,6 +242,10 @@ onMounted(() => {
         margin-right: 15px;
         margin-bottom: 15px;
         cursor: pointer;
+        background-color: rgba(245, 245, 245, 0.5);
+      }
+      .commoditysActive {
+        border-color: #f33f3f;
       }
     }
   }

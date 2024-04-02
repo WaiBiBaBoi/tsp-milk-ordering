@@ -5,6 +5,7 @@ const SystemUser = require("../model/SystmeUserModel");
 const SystmeRole = require("../model/SystmeRoleModel");
 const SystemDataDict = require("../model/SystemDataDictModel");
 const SystemDataDictConfig = require("../model/SystemDataDictConfigModel");
+const SystemDepartment = require("../model/SystemDepartmentModel");
 const Carousel = require("../model/CarouselModel");
 const User = require("../model/UserModel");
 const Product = require("../model/ProductModel");
@@ -35,6 +36,7 @@ module.exports = {
   SystmeRole,
   SystemDataDict,
   SystemDataDictConfig,
+  SystemDepartment,
   Carousel,
   User,
   Product,

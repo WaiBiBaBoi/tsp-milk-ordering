@@ -60,7 +60,7 @@
             <li class="page-item"><a class="page-link" href="#">尾页</a></li>
           </ul>
         </nav> -->
-        <a-pagination v-model:current="param.pageNo" @change="pageNoChange" :total="param.pageSize" show-less-items />
+        <a-pagination  v-if="commentsParam.pageSiz > 12" v-model:current="param.pageNo" @change="pageNoChange" :total="param.pageSize" show-less-items />
       </div>
     </div>
   </div>
