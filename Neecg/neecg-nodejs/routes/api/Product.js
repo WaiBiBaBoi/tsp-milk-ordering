@@ -109,25 +109,26 @@ router.get("/getProductList", (req, res) => {
     limit: limit,
     offset: offset,
     where: whereCondition,
-    // include: [
-    //   {
-    //     model: Commodity,
-    //     where: {
-    //       // is_available: true
-    //     },
-    //     as: "commoditys",
-    //   },
-    //   {
-    //     model: Comment,
-    //     attributes: ["id"],
-    //     as: "comments",
-    //   },
-    // ],
-    // order: [
-    //   // 这里可以指定如何排序
-    //   [{ model: Commodity, as: 'commoditys' }, 'createdAt', 'desc'],
-    //   [{ model: Comment, as: 'comments' }, 'createdAt', 'desc']
-    // ]
+    // order:[['createdAt', 'desc']]
+    include: [
+      {
+        model: Commodity,
+        where: {
+          is_available: true
+        },
+        as: "commoditys",
+      },
+      {
+        model: Comment,
+        attributes: ["id"],
+        as: "comments",
+      },
+    ],
+    order: [
+      // 这里可以指定如何排序
+      [{ model: Commodity, as: 'commoditys' }, 'createdAt', 'desc'],
+      [{ model: Comment, as: 'comments' }, 'createdAt', 'desc']
+    ]
   }).then((result) => {
     res.json({
       code: "0000",

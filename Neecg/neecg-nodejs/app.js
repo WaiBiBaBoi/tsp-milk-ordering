@@ -77,7 +77,7 @@ app.use((req, res, next) => {
   return JwtTokenmidd(req, res, next)
 });
 const verifyPaths = [
-  '/api/Product/getProductList',
+  '/api/Product/list',
 ]
 // 自定义中间件，用于校验某些路径请求传入的部门ID
 app.use((req,res,next) => {

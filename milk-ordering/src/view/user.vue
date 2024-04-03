@@ -4,20 +4,23 @@
       <div class="info-box flex-align-end">
         <div class="profile">
           <img
-            src="https://i2.hdslb.com/bfs/face/5c6b1a5ddefdeba8a2c9bed1b1327502a5d3cd60.jpg"
+            :src="userinfo.avatar"
             alt=""
           />
+          <div  class="upload">
+            <upload v-model="param.avatar" @uploadSuccess="uploadSuccess"></upload>
+          </div>
         </div>
         <div class="info">
-          <div class="name">杀马特团长</div>
+          <div class="name">{{userinfo.user_name}}</div>
           <div class="balance">
-            余额：998； <span class="cz-but">充值</span>
+            余额：{{userinfo.money}}； <span class="cz-but">充值</span>
           </div>
         </div>
         <div
           class="edit-button"
-          data-toggle="modal"
-          data-target="#edit-user-info"
+          data-bs-toggle="modal"
+          data-bs-target="#edit-user-info"
         >
           编辑
         </div>
@@ -38,7 +41,7 @@
       <HstoricalOrders v-if="activeTab === 1"></HstoricalOrders>
       <Address v-if="activeTab === 2"></Address>
     </div>
-    <modal id="edit-user-info" title="编辑信息" width="600px">
+    <modal id="edit-user-info" title="编辑信息" width="600px" @ok="editUserModalOk">
       <a-form
         :model="param"
         layout="horizontal"
@@ -51,8 +54,8 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 20 }"
       >
-        <a-form-item label="名称" name="name">
-          <a-input v-model:value="param.name" />
+        <a-form-item label="名称" name="user_name">
+          <a-input v-model:value="param.user_name" />
         </a-form-item>
 
         <a-form-item label="联系方式" name="phone" >
@@ -67,18 +70,23 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive,onMounted } from "vue";
 import Address from "../components/address.vue";
 import CurrentOrder from "../components/current-order.vue";
 import HstoricalOrders from "../components/hstorical-orders.vue";
 import modal from "../components/modal.vue";
+import { httpAction, getAction } from "../api/manage.js";
+import upload from "../components/upload.vue";
+let userinfo = reactive({})
 let param = reactive({
-  name: "",
+  user_name: "",
   phone: "",
   address: "",
+  avatar:''
 });
+
 let rules = reactive({
-  name: [
+  user_name: [
     {
       required: true,
       message: "Please input your mobile phone number!",
@@ -86,24 +94,24 @@ let rules = reactive({
     },
   ],
   phone: [
-    {
-      required: true,
-      message: "Please input your mobile phone number!",
-      trigger: "blur",
-    },
+    // {
+    //   required: true,
+    //   message: "Please input your mobile phone number!",
+    //   trigger: "blur",
+    // },
     {
       pattern: /^1[3-9]\d{9}$/,
       message: "Invalid Chinese mainland mobile phone number!",
       trigger: ["blur", "change"],
     },
   ],
-  address: [
-    {
-      required: true,
-      message: "Please input your mobile phone number!",
-      trigger: "blur",
-    },
-  ],
+  // address: [
+  //   {
+  //     required: true,
+  //     message: "Please input your mobile phone number!",
+  //     trigger: "blur",
+  //   },
+  // ],
 });
 let tabs = reactive(["当前订单", "历史订单"]); //,'收货地址'
 let activeTab = ref(0);
@@ -116,6 +124,36 @@ const onFinish = (values) => {
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
+
+const getUserInfo = () => {
+  getAction('User/info',{}).then((res) => {
+    if(res.code === '0000'){
+      for(let key in res.data){
+        userinfo[key] = res.data[key]
+      }
+      param = Object.assign(param, userinfo)
+      param.avatar = ''
+    }
+  })
+}
+const uploadSuccess = (avatar) => {
+  editUserInfo()
+}
+const editUserModalOk = () => {
+  delete param.avatar
+  editUserInfo()
+}
+const editUserInfo = () => {
+  httpAction('User/edit',param,'put').then((res) => {
+    if(res.code === '0000'){
+      getUserInfo()
+    }
+    param.avatar = ''
+  })
+}
+onMounted(() => {
+  getUserInfo()
+})
 </script>
 
 <style lang="less" scoped>
@@ -139,10 +177,21 @@ const onFinishFailed = (errorInfo) => {
   .profile {
     width: 90px;
     height: 90px;
+    position: relative;
     img {
       width: 100%;
       height: 100%;
       border-radius: 3px;
+      object-fit: cover;
+    }
+    .upload{
+      width: 90px;
+      height: 90px;
+      overflow: hidden;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
     }
   }
   .info {

@@ -27,8 +27,8 @@
           <div class="operate-buttom">
             <div
               class="edit-address-button"
-              data-toggle="modal"
-              data-target="#comment-modal"
+              data-bs-toggle="modal"
+              data-bs-target="#comment-modal"
             >
               去评论
             </div>

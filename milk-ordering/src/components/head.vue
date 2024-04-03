@@ -39,7 +39,7 @@ const logout = () => {
     user[key] = undefined
   }
   router.push('/')
-  window.location.replace()
+  window.location.reload();
 }
 const goLogin = () => {
   router.push('/login')

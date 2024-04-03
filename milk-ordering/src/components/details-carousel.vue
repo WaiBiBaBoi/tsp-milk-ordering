@@ -81,5 +81,6 @@ onMounted(() => {
   }
   .carousel-image{
     border: 1px solid #CCC;
+    
   }
 </style>

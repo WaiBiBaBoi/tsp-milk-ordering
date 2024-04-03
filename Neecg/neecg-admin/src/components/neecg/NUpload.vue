@@ -49,6 +49,7 @@ watch(
 );
 const uploadLimit = props.limit; // 设置上传数量限制
 const getFileList = (str) => {
+  fileList.value.splice(0,fileList.value.length)
   if (str) {
     fileList.value.splice(0, fileList.value.length);
     let arr = str.split(",");

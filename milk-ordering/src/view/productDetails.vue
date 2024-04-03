@@ -2,10 +2,10 @@
   <div class="product-details-container container">
     <div class="product-info-container">
       <div class="row">
-        <div class="col-6 carousel-container">
+        <div class="col-4 carousel-container">
           <Carousel :list="product.images"></Carousel>
         </div>
-        <div class="col-6">
+        <div class="col-8">
           <div class="flex-align-between">
             <div class="product-info">
               <h4>{{ product.product_name }}</h4>

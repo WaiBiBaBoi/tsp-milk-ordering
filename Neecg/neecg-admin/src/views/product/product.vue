@@ -98,7 +98,7 @@ const RefDescrip = ref(null);
 const RefChildFrom = ref(null)
 const refChildTable = ref(null)
 const httpUrl = reactive({
-  list: "Product/getProductList",
+  list: "Product/list",
   delete: "Product/delete",
 });
 const handleCommodityAdd = (record) => {

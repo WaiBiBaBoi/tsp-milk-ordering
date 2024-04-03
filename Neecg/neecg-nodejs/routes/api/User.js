@@ -94,7 +94,27 @@ router.post('/login', (req, res) => {
         }
     });
 });
-
+router.get('/info', (req, res) => {
+    let id = req.user.id
+    User.findOne({
+        where:{
+            id
+        },
+        attributes:['user_name','avatar','money','phone','address']
+    }).then(result => {
+        res.json({
+            code: '0000',
+            message: '获取成功',
+            data: result
+        })
+    }).catch(err => {
+        res.json({
+            code: '500',
+            message: '操作异常',
+            data: err
+        })
+    })
+})
 router.get('/list', (req, res) => {
     list(req, res)
 })

@@ -28,8 +28,8 @@
             <div style="display: flex">
               <div
                 class="edit-address-button"
-                data-toggle="modal"
-                data-target="#edit-address-modal"
+                data-bs-toggle="modal"
+                data-bs-target="#edit-address-modal"
               >
                 修改地址
               </div>
@@ -51,8 +51,8 @@
               </a-popconfirm>
               <div
                 class="cancel-button"
-                data-toggle="modal"
-                data-target="#chargeback-modal"
+                data-bs-toggle="modal"
+                data-bs-target="#chargeback-modal"
               >
                 退换商品
               </div>
