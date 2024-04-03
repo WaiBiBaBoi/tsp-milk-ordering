@@ -11,6 +11,9 @@ const User = require("../model/UserModel");
 const Product = require("../model/ProductModel");
 const Comment = require("../model/CommentModel");
 const Commodity = require("../model/CommodityModel");
+const Order = require("../model/OrderModel");
+const Delivery = require("../model/DeliveryModel");
+const Salesman = require("../model/SalesmanModel");
 
 const db = (success, error = (err) => {
   console.error("无法连接到数据库:", err);
@@ -42,4 +45,7 @@ module.exports = {
   Product,
   Comment,
   Commodity,
+  Order,
+  Delivery,
+  Salesman,
 };
