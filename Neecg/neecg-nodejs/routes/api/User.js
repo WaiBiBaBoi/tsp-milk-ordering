@@ -50,10 +50,15 @@ const userIsExist = (req, res, next) => {
 // 注册
 router.post('/register', codeIsExist, userIsExist, (req, res) => {
     const { user_account, user_password } = req.body;
+    // 设置默认值头像
+    if (!req.body.avatar) {
+        req.body.avatar = `${req.protocol}://${req.get('host')}/images/default_avatar.jpg`
+    }
     User.create({
         user_name: Date.now().toString(),
         user_account,
-        user_password
+        user_password,
+        avatar: req.body.avatar
     }).then(result => {
         res.json({
             code: '0000',

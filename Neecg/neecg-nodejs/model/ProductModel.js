@@ -37,6 +37,7 @@ const p = {
 
 /** 产品表
  * id: uuid
+ * department_id: uuid // 部门id
  * product_name: string
  * introduction: text // 简介
  * images: text
@@ -48,6 +49,7 @@ const p = {
 const { Model, DataTypes } = require('sequelize')
 // 导入数据实例
 const sequelize = require('../database/database')
+const Department = require("./SystemDepartmentModel");
 class Product extends Model { }
 // 初始化 SystemRole 模型，定义其结构和设置
 Product.init({
@@ -60,6 +62,10 @@ Product.init({
     department_id: {
       // 定义 用户部门 字段为 字符串类型  不允许为空
       type: DataTypes.UUID,
+      references: {
+        model: Department,
+        key: 'id'
+      },
       allowNull: false,
     },
     product_name: {
