@@ -109,10 +109,7 @@ router.get("/getProductList", (req, res) => {
     limit: limit,
     offset: offset,
     where: whereCondition,
-<<<<<<< HEAD
     // order:[['createdAt', 'desc']]
-=======
->>>>>>> ce99902ae01ef95bf1a36b84c0aa68fe46fab5a7
     include: [
       {
         model: Commodity,
