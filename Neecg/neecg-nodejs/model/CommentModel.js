@@ -38,6 +38,10 @@ Comment.init({
     comment: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    images: {
+      type: DataTypes.TEXT,
+      defaultValue: ''
     }
 }, {
     sequelize,// 指向已经实例化的 Sequelize 实例
