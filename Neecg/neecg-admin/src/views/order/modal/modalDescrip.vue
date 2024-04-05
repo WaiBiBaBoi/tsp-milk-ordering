@@ -9,26 +9,29 @@
     @after-open-change="afterOpenChange"
   >
     <a-descriptions layout="vertical" bordered>
-      <a-descriptions-item label="产品名称" :span="3">{{
-        model.product_name
+      <a-descriptions-item label="用户名" :span="3">{{
+        model.user_name
       }}</a-descriptions-item>
-      
-      <a-descriptions-item label="优选" :span="3">
-        <a-tag color="green" v-if="model.boutique">开启</a-tag>
-        <a-tag color="red" v-else>未开启</a-tag>
-      </a-descriptions-item>
-      <a-descriptions-item label="状态" :span="3">
-        <a-tag color="green" v-if="model.is_available">上架</a-tag>
-        <a-tag color="red" v-else>下架</a-tag>
-      </a-descriptions-item>
-      <!-- <a-descriptions-item label="图片" :span="3">
-        <a-image :width="200" :src="item" v-for="(item,index) in images" :key="index" />
+      <a-descriptions-item label="用户账号" :span="3">{{
+        model.user_account
+      }}</a-descriptions-item>
+      <a-descriptions-item label="用户余额" :span="3">{{
+        model.money
+      }}</a-descriptions-item>
+      <a-descriptions-item label="收货默认手机号" :span="3">{{
+        model.phone
+      }}</a-descriptions-item>
+      <a-descriptions-item label="收货默认地址" :span="3">{{
+        model.address
+      }}</a-descriptions-item>
+      <!-- <a-descriptions-item label="状态" :span="3">
+        <a-tag color="success" v-if="model.is_using">启用</a-tag>
+        <a-tag color="error" v-else>关闭</a-tag>
       </a-descriptions-item> -->
-      <a-descriptions-item label="备注" :span="3">{{
-        model.introduction
-      }}</a-descriptions-item>
+      <a-descriptions-item label="用户头像" :span="3">
+        <a-image :width="200" :src="model.avatar" />
+      </a-descriptions-item>
     </a-descriptions>
-    
     <template #footer>
       <a-button @click="hideDrawer">取消</a-button>
     </template>
@@ -41,13 +44,13 @@ import { httpAction } from "@/api/manage.js";
 const props = defineProps({
   title: {
     type: String,
-    default: "产品详情",
+    default: "详情",
   },
 });
-let model = reactive();
-let images = reactive([])
+let model = reactive({});
 const emit = defineEmits(["submitSuccess"]);
 const open = ref(false);
+
 const afterOpenChange = (bool) => {
   console.log("open", bool);
   if (!bool) {
@@ -65,9 +68,6 @@ const hideDrawer = () => {
 };
 const showDrawer = (param = {}) => {
   model = Object.assign({}, param);
-  images.splice(0,images.length)
-  images.push(...model.images.split(','))
-  console.log(images);
   open.value = true;
 };
 

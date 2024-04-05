@@ -18,6 +18,11 @@ Carousel.init({
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
+    product_id: {
+      // 定义 用户部门 字段为 字符串类型  不允许为空
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
     title: {
       type: DataTypes.STRING,
       defaultValue: ''

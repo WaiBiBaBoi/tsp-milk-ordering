@@ -5,7 +5,7 @@ const General = require('../general/index')
 const { list, add, edit, del } = General(User)
 const { testimonial } = require('../../tool/email');
 const { jwtTokne } = require('../../tool/index')
-
+const stripe = require('stripe')('sk_test_51P2EzoBdEIPiPoJT8T5lModHlRaRwWKG9LnynzmETEz6UC5jy7PeA89A0h14YSD0oK0QmrizHRf5DRcBeZyzzlUV00wOxxcGFi');
 // 验证验证码
 const codeIsExist = (req, res, next) => {
     const { code } = req.body;
@@ -120,6 +120,47 @@ router.get('/info', (req, res) => {
         })
     })
 })
+//4242 4242 4242 4242 Webhook
+router.get('/payment', async (req,res) => {
+    try {
+        const user = await User.findByPk(req.user.id)
+        if(user){
+            user.money = Number(user.money) + 1000
+            await user.save()
+        }
+        // 创建价格对象
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+              {
+                price_data: {
+                  currency: 'usd',
+                  product_data: {
+                    name: 'T-shirt',
+                  },
+                  unit_amount: 2000,
+                },
+                quantity: 1,
+              },
+            ],
+            mode: 'payment',
+            success_url: 'http://127.0.0.1:11451/user', // 替换为你的支付成功页面
+            cancel_url: 'http://127.0.0.1:11451/', // 替换为你的支付取消页面
+          });
+    
+        console.log('Payment Link URL:', session.url);
+
+        res.json({
+            code: '0000',
+            message: '获取成功',
+            data: session.url
+        })
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      
+})
+
 router.get('/list', (req, res) => {
     list(req, res)
 })

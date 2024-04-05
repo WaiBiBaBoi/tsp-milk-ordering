@@ -1,25 +1,40 @@
-:root{
+:root {
     --theme-black: #212529;
 }
-.flex-between{
+
+.flex-between {
     display: flex;
     justify-content: space-between;
 }
-.flex-align-between{
+
+.flex-align-between {
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.flex-align-center{
+
+.flex-align-center {
     display: flex;
     align-items: center;
 }
-.flex-align-end{
+
+.flex-align-end {
     display: flex;
     align-items: flex-end;
 }
-.color-fff .ant-form-item-required {
-      color: #fff !important;
-  }
 
+.color-fff .ant-form-item-required {
+    color: #fff !important;
+}
+
+.line-clamp {
+    width: 100%;
+    overflow: hidden;
+    /*将对象作为弹性伸缩盒子模型显示*/
+    display: -webkit-box;
+    /*设置子元素排列方式*/
+    -webkit-box-orient: vertical;
+    /*设置显示的行数，多出的部分会显示为...*/
+    -webkit-line-clamp: 2;
+}

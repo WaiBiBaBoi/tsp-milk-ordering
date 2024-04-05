@@ -14,7 +14,7 @@
         <div class="info">
           <div class="name">{{userinfo.user_name}}</div>
           <div class="balance">
-            余额：{{userinfo.money}}； <span class="cz-but">充值</span>
+            余额：{{userinfo.money}}； <span class="cz-but" @click="payment">充值</span>
           </div>
         </div>
         <div
@@ -133,6 +133,13 @@ const getUserInfo = () => {
       }
       param = Object.assign(param, userinfo)
       param.avatar = ''
+    }
+  })
+}
+const payment = () => {
+  getAction('User/payment',{}).then((res) => {
+    if(res.code === '0000'){
+      window.location.replace(res.data);
     }
   })
 }

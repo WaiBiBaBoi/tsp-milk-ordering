@@ -45,6 +45,10 @@ Commodity.init({
       type: DataTypes.BOOLEAN,
       defaultValue: true
     },
+    images: {
+      type: DataTypes.TEXT,
+      defaultValue: ''
+    },
     reserve: {
       type: DataTypes.BOOLEAN,
       defaultValue: true

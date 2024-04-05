@@ -38,6 +38,7 @@
                       type="button"
                       id="button-addon1"
                       style="width: 40px"
+                      @click="orderInfoParam.number--"
                     >
                       -
                     </button>
@@ -47,12 +48,15 @@
                       placeholder=""
                       aria-label="Example text with button addon"
                       aria-describedby="button-addon1"
+                      style="text-align: center;"
+                      v-model="orderInfoParam.number"
                     />
                     <button
                       class="btn btn-outline-secondary"
                       type="button"
                       id="button-addon2"
                       style="width: 40px"
+                      @click="orderInfoParam.number++"
                     >
                       +
                     </button>
@@ -128,7 +132,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted,watch } from "vue";
 import Carousel from "../components/details-carousel.vue";
 import modal from "../components/modal.vue";
 import { httpAction, getAction } from "../api/manage.js";
@@ -138,6 +142,14 @@ let orderInfoParam = reactive({
   name: "",
   phone: "",
   address: "",
+  number:1
+});
+watch(() => orderInfoParam.number, (newValue, oldValue) => {
+  console.log(newValue,'newValue');
+  // 使用正则表达式检查输入是否为标准正整数
+  if (!/^\d+$/.test(newValue) || newValue <= 0) {
+    orderInfoParam.number = 1; // 如果不是，将值设置为1
+  }
 });
 let commentsParam = {
   product_name:'',
@@ -180,6 +192,7 @@ const orderInfoFinish = (values) => {
 const orderInfoFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
+
 const getSales = (num) => {
   return num > 999 ? "999+" : num;
 };
@@ -189,6 +202,7 @@ const changeCommoditys = (item, index) => {
   product.price = item.price;
   product.text = item.commodity_name;
   product.reserve = item.reserve;
+  product.images = item.images.split(",");
 };
 const commentsLength = (arr) => {
   return arr ? arr.length : 0
@@ -201,7 +215,7 @@ const getProduct = () => {
     id: route.query.productid,
   }).then((res) => {
     if (res.code === "0000") {
-      res.data.images = res.data.images.split(",");
+      res.data.images = res.data.commoditys[0].images.split(",");
       for (let key in res.data) {
         product[key] = res.data[key];
       }

@@ -6,9 +6,6 @@
             <a-form-item label="商品名称" name="product_name">
                 <a-input placeholder="商品名称" v-model:value="model.commodity_name" />
             </a-form-item>
-            <a-form-item label="商品简介" name="introduction" >
-                <a-textarea v-model:value="model.introduction" placeholder="商品简介" :rows="4" />
-            </a-form-item>
             <a-form-item label="单价" name="price" >
                 <a-input-number v-model:value="model.price" :min="1"  />
             </a-form-item>
@@ -17,6 +14,12 @@
             </a-form-item>
             <a-form-item label="上架" name="is_available" >
                 <a-switch v-model:checked="model.is_available" />
+            </a-form-item>
+            <a-form-item label="图片" name="image" >
+                <n-upload :limit="5"  v-model="model.images" ></n-upload>
+            </a-form-item>
+            <a-form-item label="备注" name="introduction" >
+                <a-textarea v-model:value="model.introduction" placeholder="备注" :rows="4" />
             </a-form-item>
         </a-form>
         <template #footer>

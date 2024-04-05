@@ -9,20 +9,25 @@
         <hr />
       </div>
       <div class="list-container row">
-        <div class="product-item col-4" v-for="(item,index) in list1" :key="index">
+        <div
+          class="product-item col-3"
+          v-for="(item, index) in list1"
+          :key="index"
+        >
           <div class="card" style="width: 18rem">
             <img :src="item.image" class="card-img-top" alt="..." />
             <div class="card-body">
-              <div class="flex-between" >
-                <h5 class="card-title">{{item.product_name}}</h5>
-                <h5 class="card-title price">￥{{item.price}}</h5>
-              </div>
-              <p class="card-text">
-                {{item.text}}
-              </p>
               <div class="flex-between">
-                <div>销量：{{getSales(item.sales_volume)}}</div>
-                <div>评论：{{getComments(item.comments.length)}}</div>
+                <h5 class="card-title" style="font-weight: bold;font-size: 18px;">{{ item.product_name }}</h5>
+                <h5 class="card-title price">￥{{ item.price }}</h5>
+              </div>
+              <p class="card-text line-clamp">
+                {{ item.text }}
+              </p>
+              <div class="flex-between" style="font-size: 14px;">
+                <div>销量：{{ getSales(item.sales_volume) }}</div>
+                <!-- <div>评论：{{getComments(item.comments.length)}}</div> -->
+                <div>店铺：{{ item.department.department_name }}</div>
               </div>
             </div>
           </div>
@@ -36,20 +41,25 @@
         <hr />
       </div>
       <div class="list-container row">
-        <div class="product-item col-4" v-for="(item,index) in list2" :key="index">
+        <div
+          class="product-item col-3"
+          v-for="(item, index) in list2"
+          :key="index"
+        >
           <div class="card" style="width: 18rem">
             <img :src="item.image" class="card-img-top" alt="..." />
             <div class="card-body">
-              <div class="flex-between" >
-                <h5 class="card-title">{{item.product_name}}</h5>
-                <h5 class="card-title price">￥{{item.price}}</h5>
-              </div>
-              <p class="card-text">
-                {{item.text}}
-              </p>
               <div class="flex-between">
-                <div>销量：{{getSales(item.sales_volume)}}</div>
-                <div>评论：{{getComments(item.comments.length)}}</div>
+                <h5 class="card-title" style="font-weight: bold;font-size: 18px;">{{ item.product_name }}</h5>
+                <h5 class="card-title price">￥{{ item.price }}</h5>
+              </div>
+              <p class="card-text line-clamp">
+                {{ item.text }}
+              </p>
+              <div class="flex-between" style="font-size: 14px;">
+                <div>销量：{{ getSales(item.sales_volume) }}</div>
+                <!-- <div>评论：{{ getComments(item.comments.length) }}</div> -->
+                <div>店铺：{{ item.department.department_name }}</div>
               </div>
             </div>
           </div>
@@ -74,7 +84,7 @@
               高端鲜奶、奶酪等领域，市场份额处于领先地位。除中国内地外，萌牛产品还进入了东南亚、大洋洲、北美等区域的十余个国家和地区市场。
               2022年，萌牛实现全年收入925.9亿元，经营利润为54.2亿元。
             </p>
-            
+
             <p class="tag">· 精选奶源</p>
             <p class="tag">· 优质服务</p>
             <p class="tag">· 品质保证</p>
@@ -82,7 +92,7 @@
           </div>
           <div class="col-sm-6">
             <div class="image">
-                <img src="../assets/about.png" alt="">
+              <img src="../assets/about.png" alt="" />
             </div>
           </div>
         </div>
@@ -92,57 +102,56 @@
 </template>
 
 <script setup>
-import { reactive,onMounted } from "vue";
+import { reactive, onMounted } from "vue";
 import Carousel from "../components/home-carousel.vue";
 import { httpAction, getAction } from "../api/manage.js";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 const route = useRouter();
-let list1 = reactive([])
-let list2 = reactive([])
+let list1 = reactive([]);
+let list2 = reactive([]);
 const getList1 = () => {
-  getAction('Product/getBoutiqueProduct',{}).then((res) => {
-    if(res.code === '0000'){
-      list1.splice(0,list1.length)
-      for(let i = 0; i < res.data.length; i++){
-        res.data[i].image = res.data[i].images.split(',')[0]
-        res.data[i].price = res.data[i].commoditys[0].price
-        res.data[i].text = res.data[i].commoditys[0].commodity_name
+  getAction("Product/getBoutiqueProduct", {}).then((res) => {
+    if (res.code === "0000") {
+      list1.splice(0, list1.length);
+      for (let i = 0; i < res.data.length; i++) {
+        res.data[i].image = res.data[i].commoditys[0].images.split(",")[0];
+        res.data[i].price = res.data[i].commoditys[0].price;
+        res.data[i].text = res.data[i].commoditys[0].commodity_name;
       }
-      list1.push(...res.data)
+      list1.push(...res.data);
     }
-  })
-}
+  });
+};
 const getList2 = () => {
-  getAction('Product/getNewProductList',{}).then((res) => {
-    if(res.code === '0000'){
-      list2.splice(0,list1.length)
-      for(let i = 0; i < res.data.length; i++){
-        res.data[i].image = res.data[i].images.split(',')[0]
-        res.data[i].price = res.data[i].commoditys[0].price
-        res.data[i].text = res.data[i].commoditys[0].commodity_name
-
+  getAction("Product/getNewProductList", {}).then((res) => {
+    if (res.code === "0000") {
+      list2.splice(0, list1.length);
+      for (let i = 0; i < res.data.length; i++) {
+        res.data[i].image = res.data[i].commoditys[0].images.split(",")[0];
+        res.data[i].price = res.data[i].commoditys[0].price;
+        res.data[i].text = res.data[i].commoditys[0].commodity_name;
       }
-      list2.push(...res.data)
+      list2.push(...res.data);
     }
-  })
-}
+  });
+};
 const getSales = (num) => {
-  return num > 999 ? '999+' : num
-}
+  return num > 999 ? "999+" : num;
+};
 const getComments = (num) => {
-  return num > 999 ? '99+' : num
-}
+  return num > 999 ? "99+" : num;
+};
 const goProduct = () => {
   const routeLocation = route.resolve({
-    path: '/product', // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
+    path: "/product", // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
   });
   // 使用 window.open 打开新窗口到目标路由
   // routeLocation.href 会给出我们基于当前路由配置解析出的完整 URL
-  window.open(routeLocation.href, '_blank');
-}
+  window.open(routeLocation.href, "_blank");
+};
 onMounted(() => {
-  getList1()
-  getList2()
+  getList1();
+  getList2();
 });
 </script>
 
@@ -163,7 +172,7 @@ onMounted(() => {
   .product-item {
     margin-bottom: 25px;
     cursor: pointer;
-    img{
+    img {
       height: 300px;
       object-fit: cover;
     }
@@ -171,7 +180,7 @@ onMounted(() => {
   .card {
     width: 100% !important;
   }
-  .price{
+  .price {
     color: #f33f3f;
   }
 }
@@ -184,22 +193,26 @@ onMounted(() => {
 .more-button:hover {
   color: #f33f3f;
 }
-.about-container{
+.about-container {
   padding-top: 50px;
 }
-.content-container{
-    .text{
-        text-indent: 2em;
-        line-height: 24px;
+.content-container {
+  .text {
+    text-indent: 2em;
+    line-height: 24px;
+  }
+  .tag {
+    color: #007bff;
+  }
+  .image {
+    width: 100%;
+    img {
+      width: 100%;
     }
-    .tag{
-        color: #007bff;
-    }
-    .image{
-        width: 100%;
-        img{
-            width: 100%;
-        }
-    }
+  }
+}
+.card-text{
+  height: 48px;
+  font-size: 14px;
 }
 </style>

@@ -12,9 +12,6 @@
         <a-descriptions-item label="商品名称" :span="3">{{
           model.commodity_name
         }}</a-descriptions-item>
-        <a-descriptions-item label="商品简介" :span="3">{{
-          model.introduction
-        }}</a-descriptions-item>
        <a-descriptions-item label="库存" :span="3">{{
           model.reserve
         }}</a-descriptions-item>
@@ -25,6 +22,12 @@
         <a-tag color="green" v-if="model.is_available">上架</a-tag>
         <a-tag color="red" v-else>下架</a-tag>
       </a-descriptions-item>
+      <a-descriptions-item label="图片" :span="3">
+        <a-image :width="200" :src="item" v-for="(item,index) in images" :key="index" />
+      </a-descriptions-item>
+      <a-descriptions-item label="备注" :span="3">{{
+          model.introduction
+        }}</a-descriptions-item>
       </a-descriptions>
       <template #footer>
         <a-button @click="hideDrawer">取消</a-button>
@@ -61,9 +64,12 @@
     open.value = false;
   };
   const showDrawer = (param = {}) => {
-    model = Object.assign({}, param);
-    open.value = true;
-  };
+  model = Object.assign({}, param);
+  images.splice(0,images.length)
+  images.push(...model.images.split(','))
+  console.log(images);
+  open.value = true;
+};
   
   defineExpose({
     showDrawer,

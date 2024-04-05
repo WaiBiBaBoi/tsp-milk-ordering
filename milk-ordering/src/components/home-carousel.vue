@@ -14,6 +14,7 @@
     <div class="carousel-inner">
       <div
         class="carousel-item"
+        @click="goDetail(item)"
         v-for="(item, index) in list"
         :key="'slide-' + item.id"
         :class="{ active: index === 0 }"
@@ -26,10 +27,10 @@
           />
         </div>
         <!-- Optional captions -->
-        <div class="carousel-caption d-none d-md-block">
+        <!-- <div class="carousel-caption d-none d-md-block">
           <h5>{{ item.title }}</h5>
           <p>{{ item.introduction }}</p>
-        </div>
+        </div> -->
       </div>
     </div>
     <button
@@ -56,7 +57,8 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { httpAction, getAction } from "../api/manage.js";
-
+import { useRouter } from "vue-router";
+const route = useRouter();
 let list = reactive([]);
 let sliding = ref(null);
 let slide = ref(0);
@@ -69,6 +71,17 @@ const getList = () => {
     }
   });
 };
+const goDetail = (item) => {
+  if(item.product_id){
+    const routeLocation = route.resolve({
+    path: "/product-detail", // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
+    query: { productid: item.product_id },
+  });
+  // 使用 window.open 打开新窗口到目标路由
+  // routeLocation.href 会给出我们基于当前路由配置解析出的完整 URL
+  window.open(routeLocation.href, "_blank");
+  }
+}
 const onSlideStart = () => {
   sliding.value = true;
 };
@@ -88,6 +101,7 @@ onMounted(() => {
     height: 100%;
     .carousel-item {
       height: 100%;
+      cursor: pointer;
     }
   }
 }

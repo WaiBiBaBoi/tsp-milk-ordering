@@ -75,10 +75,6 @@ Product.init({
       type: DataTypes.TEXT,
       defaultValue: ''
     },
-    images: {
-      type: DataTypes.TEXT,
-      defaultValue: ''
-    },
     boutique: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

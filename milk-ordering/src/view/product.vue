@@ -39,15 +39,16 @@
             <img :src="item.image" class="card-img-top" alt="..." />
             <div class="card-body">
               <div class="flex-between">
-                <h5 class="card-title">{{ item.product_name }}</h5>
+                <h5 class="card-title" style="font-weight: bold;font-size: 18px;">{{ item.product_name }}</h5>
                 <h5 class="card-title price">￥{{ item.price }}</h5>
               </div>
-              <p class="card-text">
+              <p class="card-text line-clamp" >
                 {{ item.text }}
               </p>
-              <div class="flex-between">
+              <div class="flex-between" style="font-size: 12px;">
                 <div>销量：{{ getSales(item.sales_volume) }}</div>
-                <div>评论：{{ getComments(item.comments.length) }}</div>
+                <!-- <div>评论：{{ getComments(item.comments.length) }}</div> -->
+                <div>店铺：{{ item.department.department_name }}</div>
               </div>
             </div>
           </div>
@@ -92,7 +93,7 @@ const getList = () => {
     if (res.code === "0000") {
       list.splice(0, list.length);
       for (let i = 0; i < res.data.rows.length; i++) {
-        res.data.rows[i].image = res.data.rows[i].images.split(",")[0];
+        res.data.rows[i].image = res.data.rows[i].commoditys[0].images.split(",")[0];
         res.data.rows[i].price = res.data.rows[i].commoditys[0].price;
         res.data.rows[i].text = res.data.rows[i].commoditys[0].commodity_name;
       }
@@ -179,5 +180,9 @@ onMounted(() => {
 .pagination-container {
   display: flex;
   justify-content: center;
+}
+.card-text{
+  height: 48px;
+  font-size: 14px;
 }
 </style>

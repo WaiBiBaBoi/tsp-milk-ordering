@@ -80,6 +80,12 @@ import { httpAction, getAction } from "@/api/manage.js";
 import { Composable } from "@/composable/TableComposable";
 const { data, handle } = Composable();
 const columns = [
+{
+    title: "产品编号",
+    dataIndex: "id",
+    key: "id",
+    width:'350px'
+  },
   {
     title: "产品名称",
     dataIndex: "product_name",

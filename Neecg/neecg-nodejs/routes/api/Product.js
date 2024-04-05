@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { getPagination } = require("../../tool/index");
 const { Op } = require("../../database/index");
-const { Product, Commodity, Comment, User } = require("../../database/index");
+const { Product, Commodity, Comment, User,SystemDepartment } = require("../../database/index");
 const General = require("../general/index");
 const { list, add, edit, del } = General(Product);
 
@@ -22,6 +22,12 @@ Product.hasMany(Comment, {
   as: "comments",
 });
 
+Product.belongsTo(SystemDepartment, {
+  foreignKey: "department_id",
+  targetKey:'id',
+  as: "department",
+});
+
 // 严选优质
 router.get("/getBoutiqueProduct", (req, res) => {
   Product.findAll({
@@ -38,11 +44,19 @@ router.get("/getBoutiqueProduct", (req, res) => {
         }
       },
       {
+        model: SystemDepartment,
+        attributes: ["department_name"],
+        as: "department",
+      },
+      {
         model: Comment,
         attributes: ["id"],
         as: "comments",
       },
     ],
+    order: [
+      [{ model: Commodity, as: 'commoditys' }, 'price', 'asc'],
+    ]
   }).then((result) => {
     res.json({
       code: "0000",
@@ -71,12 +85,18 @@ router.get("/getNewProductList", (req, res) => {
         }
       },
       {
+        model: SystemDepartment,
+        attributes: ["department_name"],
+        as: "department",
+      },
+      {
         model: Comment,
         attributes: ["id"],
         as: "comments",
       },
     ],
     order: [
+      [{ model: Commodity, as: 'commoditys' }, 'price', 'asc'],
       ['createdAt', 'desc'],
     ]
   }).then((result) => {
@@ -119,6 +139,11 @@ router.get("/getProductList", (req, res) => {
         as: "commoditys",
       },
       {
+        model: SystemDepartment,
+        attributes: ["department_name"],
+        as: "department",
+      },
+      {
         model: Comment,
         attributes: ["id"],
         as: "comments",
@@ -126,7 +151,7 @@ router.get("/getProductList", (req, res) => {
     ],
     order: [
       // 这里可以指定如何排序
-      [{ model: Commodity, as: 'commoditys' }, 'createdAt', 'desc'],
+      [{ model: Commodity, as: 'commoditys' }, 'price', 'asc'],
       [{ model: Comment, as: 'comments' }, 'createdAt', 'desc']
     ]
   }).then((result) => {
