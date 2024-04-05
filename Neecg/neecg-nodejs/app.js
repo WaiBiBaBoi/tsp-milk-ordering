@@ -30,6 +30,7 @@ const Tools = require('./routes/api/Tools');
 const Product = require('./routes/api/Product');
 const Commodity = require('./routes/api/Commodity');
 const Comment = require('./routes/api/Comment');
+const Order = require("./routes/api/Order");
 
 // 创建Express应用
 var app = express();
@@ -108,6 +109,7 @@ app.use('/api/Tools', Tools);
 app.use('/api/Product', Product);
 app.use('/api/Commodity', Commodity);
 app.use('/api/Comment', Comment);
+app.use('/api/Order', Order);
 
 
 // 捕获404错误并转发到错误处理器
