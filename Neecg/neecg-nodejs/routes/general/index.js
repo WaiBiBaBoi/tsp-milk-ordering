@@ -89,7 +89,7 @@ const General = (model) => {
     }
 
     const edit = async (req, res, LifeCycle = {}) => {
-        let id = req.body.id || req.user.id
+        let id = req.body.id
         delete req.body.id
 
         model.findByPk(id).then(instance => {
