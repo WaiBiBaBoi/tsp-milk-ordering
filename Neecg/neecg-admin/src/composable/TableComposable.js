@@ -80,7 +80,8 @@ export function Composable() {
     const handleList = () => {
         getAction(httpUrl.list, proxyToObject(queryParam), 'get').then(result => {
             if (result) {
-                tableData.value = result.data.rows
+                tableData.value.splice(0,tableData.value.length)
+                tableData.value.push(...result.data.rows)
                 pagination.total = result.data.count
             }
         }).catch(err => {

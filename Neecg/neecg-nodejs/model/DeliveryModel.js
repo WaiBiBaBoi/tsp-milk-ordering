@@ -55,6 +55,11 @@ Delivery.init({
   },
   phone: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  state:{
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   }
 }, {
   sequelize, // 指向已经实例化的 Sequelize 实例

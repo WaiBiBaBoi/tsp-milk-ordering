@@ -1,31 +1,32 @@
 <template>
   <div class="current-order-container">
     <div class="list">
-      <div class="item" v-for="item in 2" :key="item">
+      <div class="item" v-for="item in orderList" :key="item.id">
         <div class="flex-between">
           <div class="order-info">
             <div class="image">
               <img
-                src="https://img11.360buyimg.com/n7/jfs/t1/134855/32/42036/144241/65fa8f08F818de655/8cb02f8a670eb286.jpg"
+                :src="item.image"
                 alt=""
               />
             </div>
             <div class="info flex-align-between">
               <div>
-                <h5>伊利纯牛奶</h5>
-                <p>整箱250ml*21盒 全脂牛奶 优质乳蛋白早餐伴侣 礼盒装</p>
-                <div class="order-state">收货人：杀马特团长</div>
-                <div class="order-state">联系方式：136xxxxxx08</div>
+                <h5>{{item.product_name}}</h5>
+                <p>{{item.commodity_name}}</p>
+                <div class="order-state">收货人：{{item.receiver}}</div>
+                <div class="order-state">联系方式：{{ item.phone }}</div>
                 <div class="address-text">
-                  收货地址：广西壮族自治区南宁市那洪街道汇东星世界1170菜鸟驿站
+                  收货地址：{{item.address}}
                 </div>
-                <div class="order-state">订单状态：未发货</div>
+                <div class="order-state">订单状态：{{item.order_status}} <span style="color: red;" v-if="item.order_status == 1">；取消原因：{{ item.abort_reason }}</span> </div>
               </div>
-              <div class="price">x2 ￥89</div>
+              <div class="price">x{{item.quantity}} ￥{{item.price}}</div>
             </div>
           </div>
-          <div class="operate-buttom">
-            <div style="display: flex">
+          <div class="operate-buttom ">
+            <div class="order-state">订单号：{{item.id}}</div>
+            <div style="display: flex;justify-content: flex-end;">
               <div
                 class="edit-address-button"
                 data-bs-toggle="modal"
@@ -37,7 +38,8 @@
                 title="Are you sure delete this task?"
                 ok-text="Yes"
                 cancel-text="No"
-                @confirm="confirm"
+                @confirm="cancelsOrder(item.id)"
+                v-if="item.order_status == 0"
               >
                 <div class="cancel-button">取消订单</div>
               </a-popconfirm>
@@ -115,6 +117,7 @@
 import { ref, reactive } from "vue";
 import modal from "../components/modal.vue";
 import upload from "../components/upload.vue";
+import { httpAction, getAction } from "../api/manage.js";
 
 let editAddressParam = reactive({
   name: "",
@@ -149,6 +152,7 @@ let editAddressRules = reactive({
     },
   ],
 });
+let orderList = reactive([])
 const editAddressFinish = (values) => {
   console.log("Success:", values);
 };
@@ -168,6 +172,27 @@ const chargebackFinish = (values) => {
 const chargebackFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
+
+const getOrderList = () => {
+  getAction('Order/userOrder',{}).then((res) => {
+    if(res.code === '0000'){
+      for(let i = 0; i < res.data.length; i++){
+        if(res.data[i].image){
+          res.data[i].image =   res.data[i].image.split(',')[0]
+        }
+      }
+      orderList.splice(0,orderList.length)
+      orderList.push(...res.data)
+
+    }
+  })
+}
+getOrderList()
+const cancelsOrder = (id) => {
+  httpAction('Order/userCancelsOrder',{id},'put').then((res) => {
+
+  })
+}
 const confirm = (e) => {
   console.log(e);
 };
@@ -206,7 +231,7 @@ const confirm = (e) => {
     .operate-buttom {
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: space-between;
       font-size: 14px;
       .cancel-button {
         color: #f33f3f;

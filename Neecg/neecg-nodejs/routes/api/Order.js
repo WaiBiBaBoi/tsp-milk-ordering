@@ -10,7 +10,7 @@
  * address: string // 收货地址
  * total_price: decimal // 总价
  * quantity: integer // 数量
- * // 订单状态: 0 已下单，1 已接单，2 配送中，3 配送完成，4 确认收货，5 退换申请中，6 退换成功，7 退换失败
+ * // 订单状态: 0 已下单，1，商家取消订单，2，用户取消订单，3 已接单，4 配送中，5 配送完成，6 确认收货，7 退换申请中，8 退换成功，9 退换失败
  * order_status: integer
  * return_message: text // 退换信息
  * create_at: datetime
@@ -71,15 +71,13 @@ router.post("/purchasing", async (req, res) => {
         id: req.user.id,
       },
     });
-
     // 获取最新的商品数据
     const commodity = await Commodity.findOne({
       where: {
         id: req.body.commodity_id,
       },
     });
-
-    // 判断是否还有库存
+   // 判断是否还有库存
     if (req.body.quantity > commodity.reserve) {
       res.json({
         code: "1000",
@@ -89,6 +87,12 @@ router.post("/purchasing", async (req, res) => {
     }
 
     const { product_id, price } = commodity;
+
+    const product = await Product.findOne({
+      where: {
+        id: product_id,
+      },
+    });
     // 计算出需要的钱
     const total_price = formatPrice(Number(price) * Number(req.body.quantity));
     if (user.money < total_price) {
@@ -112,7 +116,12 @@ router.post("/purchasing", async (req, res) => {
       receiver: req.body.receiver,
       phone: req.body.phone,
       address: req.body.address,
+      product_name:product.product_name,
+      commodity_name:commodity.commodity_name,
+      price:commodity.price,
+      image:commodity.images
     });
+   
     if (create_res) {
       Product.findOne({
         where: {
@@ -147,7 +156,6 @@ router.post("/purchasing", async (req, res) => {
     });
   }
 });
-
 router.get("/orderList", (req, res) => {
   let { limit, offset } = getPagination(req.query.pageNo, req.query.pageSize);
   delete req.query.pageNo;
@@ -162,7 +170,7 @@ router.get("/orderList", (req, res) => {
     limit: limit,
     offset: offset,
     where: whereCondition,
-    order: [["createdAt", "asc"]],
+    order: [["createdAt", "desc"]],
     distinct: true,
     include: [
       {
@@ -170,15 +178,56 @@ router.get("/orderList", (req, res) => {
         attributes: ["user_name"],
         as: "user",
       },
+      // {
+      //   model: Product,
+      //   attributes: ["product_name", "department_id"],
+      //   as: "product",
+      // },
+      // {
+      //   model: Commodity,
+      //   attributes: ["commodity_name", "price"],
+      //   as: "commodity",
+      // },
       {
-        model: Product,
-        attributes: ["product_name", "department_id"],
-        as: "product",
+        model: Delivery,
+        as: "delivery",
       },
       {
-        model: Commodity,
-        attributes: ["commodity_name", "price"],
-        as: "commodity",
+        model: Salesman,
+        as: "salesman",
+      },
+    ],
+  }).then((result) => {
+    res.json({
+      code: "0000",
+      message: "查询成功",
+      data: result,
+    });
+  }).catch((err) => {
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  });
+});
+// 用户当前订单
+router.get("/userOrder", (req, res) => {
+  // 构建模糊查询条件
+  //Object.keys 获取 searchParams 对象所有的键。然后用 reduce 方法累加器构建 Sequelize 需要的查询条件格式。
+  const whereCondition = Object.keys(req.query).reduce((acc, key) => {
+    acc[key] = { [Op.like]: `%${req.query[key]}%` };
+    return acc;
+  }, {});
+  Order.findAll({
+    where: whereCondition,
+    order: [["createdAt", "desc"]],
+    distinct: true,
+    include: [
+      {
+        model: User,
+        attributes: ["user_name"],
+        as: "user",
       },
       {
         model: Delivery,
@@ -203,7 +252,65 @@ router.get("/orderList", (req, res) => {
     });
   });
 });
-
+// 商家取消订单
+router.put("/merchantCancelsOrder", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = 1
+    order.abort_reason = req.body.abort_reason
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 用户取消订单
+router.put("/userCancelsOrder", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = 2
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 商家接单
+router.put("/confirmOrderAcceptance", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.delivery_id = req.body.delivery_id
+    order.order_status = 3
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
 router.get("/list", (req, res) => {
   list(req, res);
 });

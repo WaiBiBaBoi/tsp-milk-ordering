@@ -28,7 +28,7 @@
                 <span style="margin-right: 12px"
                   >销量：{{ getSales(product.sales_volume) }}；</span
                 >
-                <span>库存：{{product.reserve ? '有货' : '暂时缺货'}}；</span>
+                <span>库存：{{ product.reserve ? "有货" : "暂时缺货" }}；</span>
               </div>
               <div style="display: flex">
                 <div style="width: 160px; margin-right: 15px">
@@ -38,7 +38,7 @@
                       type="button"
                       id="button-addon1"
                       style="width: 40px"
-                      @click="orderInfoParam.number--"
+                      @click="orderInfoParam.quantity--"
                     >
                       -
                     </button>
@@ -48,15 +48,15 @@
                       placeholder=""
                       aria-label="Example text with button addon"
                       aria-describedby="button-addon1"
-                      style="text-align: center;"
-                      v-model="orderInfoParam.number"
+                      style="text-align: center"
+                      v-model="orderInfoParam.quantity"
                     />
                     <button
                       class="btn btn-outline-secondary"
                       type="button"
                       id="button-addon2"
                       style="width: 40px"
-                      @click="orderInfoParam.number++"
+                      @click="orderInfoParam.quantity++"
                     >
                       +
                     </button>
@@ -77,7 +77,9 @@
     </div>
     <div class="title-container flex-between">
       <div class="text">购买评论</div>
-      <div><span class="num">{{commentsLength(product.comments)}}</span> 条</div>
+      <div>
+        <span class="num">{{ commentsLength(product.comments) }}</span> 条
+      </div>
     </div>
     <hr />
     <div class="comment-container">
@@ -101,9 +103,20 @@
       </div>
     </div>
     <div class="pagination-container">
-      <a-pagination v-if="commentsParam.pageSiz > 10"  v-model:current="commentsParam.pageNo" @change="pageNoChange" :total="commentsParam.pageSize" show-less-items  />
+      <a-pagination
+        v-if="commentsParam.pageSiz > 10"
+        v-model:current="commentsParam.pageNo"
+        @change="pageNoChange"
+        :total="commentsParam.pageSize"
+        show-less-items
+      />
     </div>
-    <modal id="add-order-modal" title="填写订单信息" width="600px">
+    <modal
+      id="add-order-modal"
+      title="填写订单信息"
+      width="600px"
+      @ok="submitOrder"
+    >
       <a-form
         :model="orderInfoParam"
         layout="horizontal"
@@ -116,8 +129,8 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 20 }"
       >
-        <a-form-item label="收货人" name="name">
-          <a-input v-model:value="orderInfoParam.name" />
+        <a-form-item label="收货人" name="receiver">
+          <a-input v-model:value="orderInfoParam.receiver" />
         </a-form-item>
 
         <a-form-item label="联系方式" name="phone">
@@ -127,61 +140,73 @@
           <a-input v-model:value="orderInfoParam.address" />
         </a-form-item>
       </a-form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >关闭</button>
+        <button type="button" class="btn btn-primary" ref="okButton" :data-bs-dismiss="bool ? 'modal' : ''"  @click="submitOrder">确定</button>
+      </div>
     </modal>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted,watch } from "vue";
+import { ref, reactive, onMounted, watch,nextTick } from "vue";
 import Carousel from "../components/details-carousel.vue";
 import modal from "../components/modal.vue";
 import { httpAction, getAction } from "../api/manage.js";
 import { useRoute } from "vue-router";
+import { getCookieValue } from "../utils/cookie";
+import { jwtDecode } from "jwt-decode";
+
 const route = useRoute();
+let okButton = ref(null)
+let formRef =  ref(null)
 let orderInfoParam = reactive({
-  name: "",
+  receiver: "",
   phone: "",
   address: "",
-  number:1
+  quantity: 1,
 });
-watch(() => orderInfoParam.number, (newValue, oldValue) => {
-  console.log(newValue,'newValue');
-  // 使用正则表达式检查输入是否为标准正整数
-  if (!/^\d+$/.test(newValue) || newValue <= 0) {
-    orderInfoParam.number = 1; // 如果不是，将值设置为1
+watch(
+  () => orderInfoParam.quantity,
+  (newValue, oldValue) => {
+    console.log(newValue, "newValue");
+    // 使用正则表达式检查输入是否为标准正整数
+    if (!/^\d+$/.test(newValue) || newValue <= 0) {
+      orderInfoParam.quantity = 1; // 如果不是，将值设置为1
+    }
   }
-});
+);
 let commentsParam = {
-  product_name:'',
-  pageNo:1,
-  pageSize:10
-}
+  pageNo: 1,
+  pageSize: 10,
+};
+let bool = ref(false)
 let product = reactive({});
 let commoditysActive = ref(0);
 let orderInfoRules = reactive({
-  name: [
+  receiver: [
     {
       required: true,
-      message: "Please input your mobile phone number!",
+      message: "请填写收货人!",
       trigger: "blur",
     },
   ],
   phone: [
     {
       required: true,
-      message: "Please input your mobile phone number!",
+      message: "请填写收货人手机号!",
       trigger: "blur",
     },
     {
       pattern: /^1[3-9]\d{9}$/,
-      message: "Invalid Chinese mainland mobile phone number!",
+      message: "请输入正确的手机号格式!",
       trigger: ["blur", "change"],
     },
   ],
   address: [
     {
       required: true,
-      message: "Please input your mobile phone number!",
+      message: "请填写收货地址!",
       trigger: "blur",
     },
   ],
@@ -192,24 +217,41 @@ const orderInfoFinish = (values) => {
 const orderInfoFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
-
+const submitOrder = async () => {
+  orderInfoParam.commodity_id = product.commodity_id
+ try{
+  if(bool.value) return
+  bool.value = true
+  await formRef.value.validate()
+  httpAction("Order/purchasing", orderInfoParam, "post").then((res) => {
+    okButton.value.click()
+    bool.value = false
+  }).catch(err => {
+    bool.value = false
+  });
+ }catch(err){
+  bool.value = false
+ }
+ return
+};
 const getSales = (num) => {
   return num > 999 ? "999+" : num;
 };
 const changeCommoditys = (item, index) => {
   if (index === commoditysActive) return;
   commoditysActive = index;
+  product.commodity_id = item.id
   product.price = item.price;
   product.text = item.commodity_name;
   product.reserve = item.reserve;
   product.images = item.images.split(",");
 };
 const commentsLength = (arr) => {
-  return arr ? arr.length : 0
-}
+  return arr ? arr.length : 0;
+};
 const pageNoChange = (e) => {
-  commentsParam.pageNo = e
-}
+  commentsParam.pageNo = e;
+};
 const getProduct = () => {
   getAction("Product/getProduct", {
     id: route.query.productid,
@@ -219,6 +261,7 @@ const getProduct = () => {
       for (let key in res.data) {
         product[key] = res.data[key];
       }
+      product.commodity_id = res.data.commoditys[0].id
       product.price = res.data.commoditys[0].price;
       product.text = res.data.commoditys[0].commodity_name;
       product.reserve = res.data.commoditys[0].reserve;
@@ -228,6 +271,12 @@ const getProduct = () => {
   });
 };
 onMounted(() => {
+  if (getCookieValue("milk-token")) {
+    let decoded = jwtDecode(getCookieValue("milk-token"))
+    orderInfoParam.receiver = decoded.user_name
+    orderInfoParam.address = decoded.address
+    orderInfoParam.phone = decoded.phone
+  }
   getProduct();
 });
 </script>

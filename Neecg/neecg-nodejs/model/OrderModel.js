@@ -50,6 +50,9 @@ Order.init({
     },
     allowNull: false,
   },
+  product_name: {
+    type: DataTypes.STRING,
+  },
   commodity_id: {
     type: DataTypes.UUID,
     references: {
@@ -57,6 +60,18 @@ Order.init({
       key: 'id'
     },
     allowNull: false,
+  },
+  commodity_name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.DECIMAL,
+    allowNull: false
+  },
+  image: {
+    type: DataTypes.TEXT,
+    defaultValue: ''
   },
   delivery_id: {
     type: DataTypes.UUID,
@@ -96,7 +111,18 @@ Order.init({
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  // 取消原因
+  abort_reason:{
+    type: DataTypes.TEXT
+  },
+  // 商家拒绝退换原因
+  reject_reason:{
+    type: DataTypes.TEXT
+  },
   return_message: {
+    type: DataTypes.TEXT
+  },
+  return_images:{
     type: DataTypes.TEXT
   }
 }, {

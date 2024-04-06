@@ -50,8 +50,8 @@ Commodity.init({
       defaultValue: ''
     },
     reserve: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
+      type: DataTypes.NUMBER,
+      defaultValue: 0
     }
 }, {
     sequelize,// 指向已经实例化的 Sequelize 实例

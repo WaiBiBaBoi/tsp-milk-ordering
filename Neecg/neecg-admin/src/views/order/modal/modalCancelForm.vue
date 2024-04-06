@@ -4,8 +4,8 @@
 
         <a-form ref="form" :model="model" name="basic" :label-col="{ span: 4 }" :wrapper-col="{ span: 20 }"
             autocomplete="off" :rules="rules" labelAlign="right" >
-            <a-form-item label="商品名称" name="commodity_name">
-                <a-input placeholder="商品名称" v-model:value="model.commodity_name" />
+            <a-form-item label="取消原因" name="abort_reason">
+                <a-input placeholder="取消原因" v-model:value="model.abort_reason" />
             </a-form-item>
         </a-form>
         <template #footer>
@@ -31,10 +31,10 @@ const form = ref(null)
 let model = reactive({})
 const httpUrl = reactive({
     add: 'Order/add',
-    edit: 'Order/edit'
+    edit: 'Order/merchantCancelsOrder'
 })
 const rules = reactive({
-    // abort_reason: [{ required: true, message: '请填写取消原' }],
+    abort_reason: [{ required: true, message: '请填写取消原' }],
     // image: [{ required: true, message: '请上传图片' }],
     
 })
@@ -82,11 +82,12 @@ const submit = () => {
             url = httpUrl.add
             method = 'post'
         }
-        httpAction(url, model, method).then(result => {
-            console.log(result);
+        httpAction(url, {abort_reason:model.abort_reason,id:model.id}, method).then(result => {
             if (result.code === '0000') {
                 open.value = false;
-                emit('submitSuccess')
+                setTimeout(() => {
+                    emit('submitSuccess')
+                },1000)
             }
         }).catch(err => {
             console.log(err);

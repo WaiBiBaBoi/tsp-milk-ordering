@@ -8,11 +8,9 @@
       </div>
       <div class="modal-body">
         <slot></slot>
+       
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  @click="close">关闭</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"  @click="ok">确定</button>
-      </div>
+      
     </div>
   </div>
 </div>
