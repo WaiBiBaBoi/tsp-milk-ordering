@@ -212,7 +212,7 @@ router.get("/orderList", (req, res) => {
   });
 });
 // 用户当前订单
-router.get("/userOrder", (req, res) => {
+router.get("/userCurrentOrder", (req, res) => {
   // 构建模糊查询条件
   //Object.keys 获取 searchParams 对象所有的键。然后用 reduce 方法累加器构建 Sequelize 需要的查询条件格式。
   const whereCondition = Object.keys(req.query).reduce((acc, key) => {
@@ -220,7 +220,59 @@ router.get("/userOrder", (req, res) => {
     return acc;
   }, {});
   Order.findAll({
-    where: whereCondition,
+    where: {
+      ...whereCondition,
+      order_status: {
+        [Op.in]: [0, 3, 4, 5, 7], // 筛选状态为1和4的数据
+      },
+    },
+    order: [["createdAt", "desc"]],
+    distinct: true,
+    include: [
+      {
+        model: User,
+        attributes: ["user_name"],
+        as: "user",
+      },
+      {
+        model: Delivery,
+        as: "delivery",
+      },
+      {
+        model: Salesman,
+        as: "salesman",
+      },
+    ],
+  }).then((result) => {
+    res.json({
+      code: "0000",
+      message: "查询成功",
+      data: result,
+    });
+  }).catch((err) => {
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  });
+});
+// 用户历史订单
+router.get("/userHistoryOrder", (req, res) => {
+  // 构建模糊查询条件
+  //Object.keys 获取 searchParams 对象所有的键。然后用 reduce 方法累加器构建 Sequelize 需要的查询条件格式。
+  const whereCondition = Object.keys(req.query).reduce((acc, key) => {
+    acc[key] = { [Op.like]: `%${req.query[key]}%` };
+    return acc;
+  }, {});
+  Order.findAll({
+    where: {
+      ...whereCondition,
+      order_status:{
+        [Op.in]: [1, 2, 6, 8,9 ], // 筛选状态为1和4的数据
+
+      }
+    },
     order: [["createdAt", "desc"]],
     distinct: true,
     include: [
@@ -297,6 +349,104 @@ router.put("/confirmOrderAcceptance", async (req, res) => {
     const order = await Order.findByPk(req.body.id)
     order.delivery_id = req.body.delivery_id
     order.order_status = 3
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 配送员开始配送订单
+router.put("/startDelivery", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = 4
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 配送员完成配送
+router.put("/completeDelivery", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = 5
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 用户确认收货
+router.put("/confirmReceipt", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = 6
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 用户退换申请
+router.put("/returnApplication", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = 7
+    order.return_images = req.body.return_images
+    order.return_message = req.body.return_message
+    order.save()
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: '',
+    });
+  }catch(err){
+    res.json({
+      code: "500",
+      message: "查询异常",
+      err: err,
+    });
+  }
+});
+// 退换申请审核
+router.put("/returnReview", async (req, res) => {
+  try{
+    const order = await Order.findByPk(req.body.id)
+    order.order_status = req.body.status
+    order.reject_reason = req.body.reject_reason || ''
     order.save()
     res.json({
       code: "0000",

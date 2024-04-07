@@ -8,7 +8,7 @@
   >
     <div v-if="fileList.length < uploadLimit">
       <a-icon type="plus" />
-      <div style="margin-top: 8px">Upload</div>
+      <div style="margin-top: 8px">上传图片</div>
     </div>
   </a-upload>
 </template>

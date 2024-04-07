@@ -170,6 +170,7 @@ router.post('/add', (req, res) => {
 })
 
 router.put('/edit', (req, res) => {
+    req.body.id = req.user.id
     edit(req, res)
 })
 

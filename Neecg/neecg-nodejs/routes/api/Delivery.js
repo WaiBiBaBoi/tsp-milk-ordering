@@ -92,10 +92,46 @@ router.get("/info", async (req, res) => {
       code: "0000",
       message: "操作成功",
       data: {
-        delivery_name:result.delivery_name,
-        performance:result.performance,
-        monthPerformance:count
+        delivery_name: result.delivery_name,
+        performance: result.performance,
+        monthPerformance: count,
       },
+    });
+  } catch (err) {
+    res.json({
+      code: "500",
+      message: "操作异常",
+      data: err,
+    });
+  }
+});
+
+router.get("/delivery-list", async (req, res) => {
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  try {
+    const whereCondition = Object.keys(req.query).reduce((acc, key) => {
+        acc[key] = { [Op.like]: `%${req.query[key]}%` };
+        return acc;
+      }, {});
+    const result = await Order.findAndCountAll({
+      where: {
+        ...whereCondition,
+        order_status: {
+          [Op.in]: [...req.query.order_status], // 筛选状态为1和4的数据
+        },
+        createdAt: {
+          [Op.gte]: firstDayOfMonth, // 大于等于当前月份的第一天
+          [Op.lte]: lastDayOfMonth, // 小于等于当前月份的最后一天
+        },
+      },
+      // 可以添加其他查询选项，如排序、关联等
+    });
+    res.json({
+      code: "0000",
+      message: "操作成功",
+      data: result,
     });
   } catch (err) {
     res.json({
