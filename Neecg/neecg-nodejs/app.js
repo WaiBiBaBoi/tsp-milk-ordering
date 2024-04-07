@@ -69,6 +69,7 @@ const excludedPaths = [
   '/api/Product/getProductList',
   '/api/Commodity/list',
   '/api/Comment/list',
+  '/api/Delivery/login',
 ];
 // 自定义中间件，用于排除某些路径不用经过Token验证
 app.use((req, res, next) => {

@@ -4,7 +4,7 @@ const SECRET_KEY = 'your-secret-key' // 生产环境中应该更安全，且存�
 
 module.exports = (req, res, nuxt) => {
   const token = req.get('token') || req.cookies['milk-token'];
-  console.log(token)
+  console.log(token,'---------------')
   if (token) {
     jwt.verify(token, SECRET_KEY, (err, result) => {
       if (err) {

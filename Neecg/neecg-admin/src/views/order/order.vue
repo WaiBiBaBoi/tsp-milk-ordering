@@ -28,7 +28,7 @@
                 <template v-slot:operation="{ record }">
                     <div class="operation">
                         <a-button type="link" @click="handle.handleDetails(record)">详情</a-button>
-                        <a-button type="link" >确认接单</a-button>
+                        <a-button type="link" @click="confirmOrder(record)">确认接单</a-button>
                         <a-button type="link" @click="cancelsOrder(record)">取消订单</a-button>
                         <a-button type="link" >退换审核</a-button>
                         <!-- <a-button type="link" @click="handle.handleEdit(record)"
@@ -54,6 +54,7 @@
         <modal-form ref="RefForm" @submitSuccess="handle.submitSuccess"></modal-form>
         <modal-cancel-form ref="RefCancelForm" @submitSuccess="handle.submitSuccess"></modal-cancel-form>
         <modal-descrip ref="RefDescrip"></modal-descrip>
+        <modal-confirm-from ref="RefConfirmFrom" @submitSuccess="handle.submitSuccess"></modal-confirm-from>
     </div>
 </template>
 
@@ -62,6 +63,7 @@ import { ref, reactive, onMounted } from 'vue';
 import modalForm from './modal/modalForm.vue'
 import modalDescrip from './modal/modalDescrip.vue'
 import modalCancelForm from './modal/modalCancelForm.vue'
+import modalConfirmFrom from './modal/modalConfirmFrom.vue'
 
 import { httpAction,getAction } from '@/api/manage.js'
 import {Composable} from '@/composable/TableComposable'
@@ -115,12 +117,16 @@ const columns = [
 const RefForm = ref(null)
 const RefDescrip = ref(null)
 const RefCancelForm =  ref(null)
+const RefConfirmFrom = ref(null)
 const httpUrl = reactive({
     list:'Order/orderList',
     delete:'Order/delete'
 })
 const cancelsOrder = (record) => {
     RefCancelForm.value.showDrawer(record)
+}
+const confirmOrder = (record) => {
+    RefConfirmFrom.value.showDrawer(record)
 }
 onMounted(() => {
     console.log('onMounted');
