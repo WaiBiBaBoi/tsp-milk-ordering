@@ -23,6 +23,7 @@ const SystemPermission = require('./routes/api/SystemPermission');
 const SystemDataDict = require('./routes/api/SystemDataDict');
 const SystemDataDictConfig = require('./routes/api/SystemDataDictConfig');
 const SystemDepartment = require('./routes/api/SystemDepartment');
+const SystemHome = require('./routes/api/SystemHome');
 const Upload = require('./routes/api/Upload');
 const Carousel = require('./routes/api/Carousel');
 const User = require('./routes/api/User');
@@ -82,6 +83,14 @@ app.use((req, res, next) => {
 });
 const verifyPaths = [
   '/api/Product/list',
+  '/api/SystemHome/totalSales',
+  '/api/SystemHome/dailySales',
+  '/api/SystemHome/totalOrderQuantity',
+  '/api/SystemHome/totalSuccessfulOrders',
+  '/api/SystemHome/weeklySales',
+  '/api/SystemHome/weeklyMerchandiseSales',
+  '/api/SystemHome/calculateWeeklySales',
+  '/api/SystemHome/allProductSalesTrends'
 ]
 // 自定义中间件，用于校验某些路径请求传入的部门ID
 app.use((req,res,next) => {
@@ -104,6 +113,7 @@ app.use('/api/SystemPermission', SystemPermission);
 app.use('/api/SystemDataDict', SystemDataDict);
 app.use('/api/SystemDataDictConfig', SystemDataDictConfig);
 app.use('/api/SystemDepartment', SystemDepartment);
+app.use('/api/SystemHome', SystemHome);
 app.use('/api/Upload', Upload);
 app.use('/api/Carousel', Carousel);
 app.use('/api/User', User);
