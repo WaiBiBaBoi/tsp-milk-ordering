@@ -9,6 +9,7 @@ router.get('/list', (req, res) => {
 })
 
 router.post('/add', (req, res) => {
+    req.body.user_id = req.user.id
     add(req, res)
 
 })

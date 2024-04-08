@@ -3,19 +3,19 @@
     <div class="container">
       <div class="info-box flex-align-end">
         <div class="profile">
-          <img
-            :src="userinfo.avatar"
-            alt=""
-          />
-          <div  class="upload">
-            <upload v-model="param.avatar" @uploadSuccess="uploadSuccess"></upload>
+          <img :src="userinfo.avatar" alt="" />
+          <div class="upload">
+            <upload
+              v-model="param.avatar"
+              @uploadSuccess="uploadSuccess"
+            ></upload>
           </div>
         </div>
         <div class="info">
-          <div class="name">{{userinfo.user_name}}</div>
-          <div class="balance">
+          <div class="name">{{ userinfo.user_name }}</div>
+          <!-- <div class="balance">
             余额：{{userinfo.money}}； <span class="cz-but" @click="payment">充值</span>
-          </div>
+          </div> -->
         </div>
         <div
           class="edit-button"
@@ -41,7 +41,12 @@
       <HstoricalOrders v-if="activeTab === 1"></HstoricalOrders>
       <Address v-if="activeTab === 2"></Address>
     </div>
-    <modal id="edit-user-info" title="编辑信息" width="600px" @ok="editUserModalOk">
+    <modal
+      id="edit-user-info"
+      title="编辑信息"
+      width="600px"
+      @ok="editUserModalOk"
+    >
       <a-form
         :model="param"
         layout="horizontal"
@@ -58,38 +63,55 @@
           <a-input v-model:value="param.user_name" />
         </a-form-item>
 
-        <a-form-item label="联系方式" name="phone" >
+        <a-form-item label="联系方式" name="phone">
           <a-input v-model:value="param.phone" />
         </a-form-item>
         <a-form-item label="收货地址" name="address">
           <a-input v-model:value="param.address" />
         </a-form-item>
       </a-form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          关闭
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          ref="okButton"
+          :data-bs-dismiss="bool ? 'modal' : ''"
+          @click="editUserModalOk"
+        >
+          确定
+        </button>
+      </div>
     </modal>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive,onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import Address from "../components/address.vue";
 import CurrentOrder from "../components/current-order.vue";
 import HstoricalOrders from "../components/hstorical-orders.vue";
 import modal from "../components/modal.vue";
 import { httpAction, getAction } from "../api/manage.js";
 import upload from "../components/upload.vue";
-let userinfo = reactive({})
+let userinfo = reactive({});
+let okButton = ref(null);
+let formRef = ref(null);
+let bool = ref(false);
 let param = reactive({
   user_name: "",
   phone: "",
   address: "",
-  avatar:''
+  avatar: "",
 });
 
 let rules = reactive({
   user_name: [
     {
       required: true,
-      message: "Please input your mobile phone number!",
+      message: "请填写用户名称!",
       trigger: "blur",
     },
   ],
@@ -101,7 +123,7 @@ let rules = reactive({
     // },
     {
       pattern: /^1[3-9]\d{9}$/,
-      message: "Invalid Chinese mainland mobile phone number!",
+      message: "请填写正确格式的手机号!",
       trigger: ["blur", "change"],
     },
   ],
@@ -126,41 +148,55 @@ const onFinishFailed = (errorInfo) => {
 };
 
 const getUserInfo = () => {
-  getAction('User/info',{}).then((res) => {
-    if(res.code === '0000'){
-      for(let key in res.data){
-        userinfo[key] = res.data[key]
+  getAction("User/info", {}).then((res) => {
+    if (res.code === "0000") {
+      for (let key in res.data) {
+        userinfo[key] = res.data[key];
       }
-      param = Object.assign(param, userinfo)
-      param.avatar = ''
+      param = Object.assign(param, userinfo);
+      param.avatar = "";
     }
-  })
-}
+  });
+};
 const payment = () => {
-  getAction('User/payment',{}).then((res) => {
-    if(res.code === '0000'){
+  getAction("User/payment", {}).then((res) => {
+    if (res.code === "0000") {
       window.location.replace(res.data);
     }
-  })
-}
+  });
+};
 const uploadSuccess = (avatar) => {
-  editUserInfo()
-}
-const editUserModalOk = () => {
-  delete param.avatar
-  editUserInfo()
-}
+  editUserInfo();
+};
+const editUserModalOk = async () => {
+  try {
+    if (bool.value) return;
+    bool.value = true;
+    await formRef.value.validate();
+    delete param.avatar;
+    editUserInfo();
+  } catch (err) {
+    console.log(err);
+    bool.value = false;
+  }
+};
 const editUserInfo = () => {
-  httpAction('User/edit',param,'put').then((res) => {
-    if(res.code === '0000'){
-      getUserInfo()
-    }
-    param.avatar = ''
-  })
-}
+  httpAction("User/edit", param, "put")
+    .then((res) => {
+      if (res.code === "0000") {
+        okButton.value.click();
+        bool.value = false;
+        getUserInfo();
+      }
+      param.avatar = "";
+    })
+    .catch((err) => {
+      bool.value = false;
+    });
+};
 onMounted(() => {
-  getUserInfo()
-})
+  getUserInfo();
+});
 </script>
 
 <style lang="less" scoped>
@@ -191,7 +227,7 @@ onMounted(() => {
       border-radius: 3px;
       object-fit: cover;
     }
-    .upload{
+    .upload {
       width: 90px;
       height: 90px;
       overflow: hidden;

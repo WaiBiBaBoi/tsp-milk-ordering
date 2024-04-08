@@ -12,6 +12,7 @@
         <div
           class="product-item col-3"
           v-for="(item, index) in list1"
+          @click="goDetail(item)"
           :key="index"
         >
           <div class="card" style="width: 18rem">
@@ -43,6 +44,7 @@
       <div class="list-container row">
         <div
           class="product-item col-3"
+          @click="goDetail(item)"
           v-for="(item, index) in list2"
           :key="index"
         >
@@ -65,7 +67,7 @@
           </div>
         </div>
       </div>
-      <div class="more-button">更多精品</div>
+      <div class="more-button"  @click="goProduct">更多精品</div>
     </div>
     <div class="about-container container">
       <div class="title-container">
@@ -144,6 +146,15 @@ const getComments = (num) => {
 const goProduct = () => {
   const routeLocation = route.resolve({
     path: "/product", // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
+  });
+  // 使用 window.open 打开新窗口到目标路由
+  // routeLocation.href 会给出我们基于当前路由配置解析出的完整 URL
+  window.open(routeLocation.href, "_blank");
+};
+const goDetail = (e) => {
+  const routeLocation = route.resolve({
+    path: "/product-detail", // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
+    query: { productid: e.id },
   });
   // 使用 window.open 打开新窗口到目标路由
   // routeLocation.href 会给出我们基于当前路由配置解析出的完整 URL

@@ -6,7 +6,7 @@
             <a-form-item label="产品名称" name="product_name">
                 <a-input placeholder="产品名称" v-model:value="model.product_name" />
             </a-form-item>
-            <a-form-item label="优选" name="boutique" >
+            <a-form-item label="优选" name="boutique" v-if="is_protected === 1">
                 <a-switch v-model:checked="model.boutique" />
             </a-form-item>
             <a-form-item label="上架" name="is_available" >
@@ -29,6 +29,8 @@
 <script setup>
 import { ref, reactive, defineEmits } from 'vue';
 import { httpAction } from '@/api/manage.js'
+import { getUser } from "@/utils/storage";
+
 // const props = defineProps({
 //   title: {
 //     type: String,
@@ -38,6 +40,7 @@ import { httpAction } from '@/api/manage.js'
 const emit = defineEmits(['submitSuccess']);
 const open = ref(false);
 const form = ref(null)
+let {is_protected} = getUser()
 import { message } from 'ant-design-vue';
 let title = ref('')
 let model = reactive({

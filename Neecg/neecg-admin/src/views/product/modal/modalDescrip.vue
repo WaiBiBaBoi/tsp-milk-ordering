@@ -65,8 +65,10 @@ const hideDrawer = () => {
 };
 const showDrawer = (param = {}) => {
   model = Object.assign({}, param);
-  images.splice(0,images.length)
+  if(model.images){
+    images.splice(0,images.length)
   images.push(...model.images.split(','))
+  }
   console.log(images);
   open.value = true;
 };

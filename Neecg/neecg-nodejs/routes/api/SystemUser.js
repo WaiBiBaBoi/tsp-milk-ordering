@@ -68,7 +68,7 @@ router.post('/login', (req, res) => {
             delete result.id
             delete result.role_id
             delete result.department_id
-            delete result.is_protected
+            // delete result.is_protected
             res.json({
                 code: '0000',
                 message: '登录成功',

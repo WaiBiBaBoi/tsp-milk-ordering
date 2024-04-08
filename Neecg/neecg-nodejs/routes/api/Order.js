@@ -26,6 +26,7 @@ const { Order, Commodity, Product, User, Delivery, Salesman } = require(
 );
 const General = require("../general/index");
 const { list, add, edit, del } = General(Order);
+const stripe = require('stripe')('sk_test_51P2EzoBdEIPiPoJT8T5lModHlRaRwWKG9LnynzmETEz6UC5jy7PeA89A0h14YSD0oK0QmrizHRf5DRcBeZyzzlUV00wOxxcGFi');
 
 Order.belongsTo(User, {
   foreignKey: "user_id",
@@ -95,15 +96,15 @@ router.post("/purchasing", async (req, res) => {
     });
     // 计算出需要的钱
     const total_price = formatPrice(Number(price) * Number(req.body.quantity));
-    if (user.money < total_price) {
-      res.json({
-        code: "1000",
-        message: "购买失败，账户余额不足!",
-      });
-      return;
-    }
+    // if (user.money < total_price) {
+    //   res.json({
+    //     code: "1000",
+    //     message: "购买失败，账户余额不足!",
+    //   });
+    //   return;
+    // }
 
-    const money = formatPrice(Number(user.money) - total_price);
+    // const money = formatPrice(Number(user.money) - total_price);
 
     // 创建订单表
     const create_res = await Order.create({
@@ -121,7 +122,8 @@ router.post("/purchasing", async (req, res) => {
       price:commodity.price,
       image:commodity.images
     });
-   
+    let payUnitPrice = commodity.price
+    let payQuantity = req.body.quantity
     if (create_res) {
       Product.findOne({
         where: {
@@ -134,13 +136,46 @@ router.post("/purchasing", async (req, res) => {
         commodity.reserve = Number(commodity.reserve) -
           Number(req.body.quantity);
         // 更新用户余额
-        user.money = money;
+        // user.money = money;
         return Promise.all([user.save(), product.save(), commodity.save()]);
-      }).then((result) => {
+      }).then(async (result) => {
         if (result) {
+          // res.json({
+          //   code: "0000",
+          //   message: "下单成功!",
+          // });
+          const session = await stripe.checkout.sessions.create({
+            // 指定支付方式，这里使用'card'即信用卡/借记卡支付
+            payment_method_types: ["card"],
+            // 定义购买的商品信息，这里是一个具有单个商品的数组
+            line_items: [
+              {
+                price_data: {
+                  currency: "cny", // 设定货币为人民币
+                  product_data: {
+                    name: "T-shirt", // 产品名字
+                  },
+                  unit_amount: payUnitPrice * 100, // 产品单价，单位为货币的最小金额单位，这里是美分，所以2000表示20美元
+                },
+                quantity: payQuantity, // 购买数量
+              },
+            ],
+            // 设置支付模式为'payment'，表示这是一个一次性支付
+            mode: "payment",
+            // 支付成功后的回调URL，此处需替换为实际的页面URL
+            success_url: "http://127.0.0.1:11451/user",
+            // 用户取消支付后的回调URL，此处也需替换为实际的页面URL
+            cancel_url: "http://127.0.0.1:11451/",
+          });
+      
+          // 打印支付链接URL，用于调试或日志记录
+          console.log("Payment Link URL:", session.url);
+      
+          // 将支付链接URL作为响应返回给调用者
           res.json({
-            code: "0000",
-            message: "下单成功!",
+            code: "0000", // 自定义的成功响应码
+            message: "获取成功", // 响应消息
+            data: session.url, // 将支付链接URL包含在响应数据中
           });
         } else {
           res.json({
@@ -385,9 +420,13 @@ router.put("/startDelivery", async (req, res) => {
 // 配送员完成配送
 router.put("/completeDelivery", async (req, res) => {
   try{
+
     const order = await Order.findByPk(req.body.id)
     order.order_status = 5
     order.save()
+    const delivery = await Delivery.findByPk(req.user.id)
+    delivery.performance = delivery.performance + 1
+    delivery.save()
     res.json({
       code: "0000",
       message: "操作成功",

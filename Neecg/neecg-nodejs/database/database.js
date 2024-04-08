@@ -5,7 +5,7 @@ const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize("neecg", "root", "root", {
   host: "127.0.0.1",
   dialect: "mysql",
-  port: 3307,
+  port: 3306,
   dialectOptions: {
     // 将时区设置为'+08:00'，这样从数据库检索的时间就是北京时间
     useUTC: false, // for reading from database

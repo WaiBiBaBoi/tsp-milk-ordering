@@ -1,7 +1,7 @@
 <template>
   <div class="current-order-container">
     <div class="list">
-      <div class="item" v-for="item in orderList" :key="item.id">
+      <div class="item" v-for="item in orderList" :key="item.id" @click="goDetail(item)">
         <div class="flex-between">
           <div class="order-info">
             <div class="image">
@@ -15,9 +15,12 @@
                 <div class="order-state">联系方式：{{ item.phone }}</div>
                 <div class="address-text">收货地址：{{ item.address }}</div>
                 <div class="order-state">
-                  订单状态：{{ item.order_status }}
+                  订单状态：{{ status_arr[item.order_status].text  }}；
                   <span style="color: red" v-if="item.order_status == 1"
-                    >；取消原因：{{ item.abort_reason }}</span
+                    >取消原因：{{ item.abort_reason }}</span
+                  >
+                  <span style="color: red" v-if="item.order_status == 9"
+                    >拒绝原因：{{ item.reject_reason }}</span
                   >
                 </div>
               </div>
@@ -25,12 +28,17 @@
             </div>
           </div>
           <div class="operate-buttom">
-            <div class="order-state">订单号：{{ item.id }}</div>
+            <div>
+              <div class="order-state">订单号：{{ item.id }}</div>
+              <div class="order-state"  v-if="item.delivery">配送员：{{ item.delivery.delivery_name }}</div>
+              <div class="order-state" v-if="item.delivery">手机号：{{ item.delivery.phone }}</div>
+            </div>
             <div style="display: flex; justify-content: flex-end">
               <div
               class="edit-address-button"
               data-bs-toggle="modal"
               data-bs-target="#comment-modal"
+              @click.stop="commentParam.product_id = item.product_id"
             >
               评论
             </div>
@@ -83,6 +91,8 @@ import { ref, reactive } from "vue";
 import modal from "../components/modal.vue";
 import upload from "../components/upload.vue";
 import { httpAction, getAction } from "../api/manage.js";
+import { useRouter } from "vue-router";
+const route = useRouter();
 let okButton = ref(null);
 let formRef = ref(null);
 let bool = ref(false);
@@ -107,6 +117,48 @@ let commentRules = reactive({
   //   },
   // ],
 })
+const status_arr = reactive([
+  {
+    text: "已下单",
+    value: 0,
+  },
+  {
+    text: "商家取消订单",
+    value: 1,
+  },
+  {
+    text: "已取消订单",
+    value: 2,
+  },
+  {
+    text: "商家已接单",
+    value: 3,
+  },
+  {
+    text: "配送中",
+    value: 4,
+  },
+  {
+    text: "配送完成",
+    value: 5,
+  },
+  {
+    text: "确认收货",
+    value: 6,
+  },
+  {
+    text: "退换申请中",
+    value: 7,
+  },
+  {
+    text: "商家同意退换",
+    value: 8,
+  },
+  {
+    text: "商家拒绝退换",
+    value: 9,
+  },
+]);
 const getOrderList = () => {
   getAction("Order/userHistoryOrder", {}).then((res) => {
     if (res.code === "0000") {
@@ -127,9 +179,38 @@ const commentFinish = (values) => {
 const commentFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
-const handleComment = () => {
-
+const handleComment = async () => {
+  try {
+    if (bool.value) return;
+    bool.value = true;
+    await formRef.value.validate()
+    httpAction("Comment/add", commentParam, "post")
+      .then((res) => {
+        if (res.code === "0000") {
+          okButton.value.click();
+          bool.value = false;
+          for(let key in commentParam){
+            commentParam[key] = undefined
+          }
+        }
+      })
+      .catch((err) => {
+        bool.value = false;
+      });
+  } catch (err) {
+    console.log(err);
+    bool.value = false;
+  }
 }
+const goDetail = (e) => {
+  const routeLocation = route.resolve({
+    path: "/product-detail", // 在这里替换为目标路由的名称，或者直接使用 path: '/your-path'
+    query: { productid: e.product_id },
+  });
+  // 使用 window.open 打开新窗口到目标路由
+  // routeLocation.href 会给出我们基于当前路由配置解析出的完整 URL
+  window.open(routeLocation.href, "_blank");
+};
 </script>
   
   <style lang="less" scoped>
@@ -138,6 +219,7 @@ const handleComment = () => {
 }
 .list {
   .item {
+  cursor: pointer;
     .order-info {
       display: flex;
       .image {
