@@ -7,8 +7,16 @@ const { Op } = Sequelize;
 
 // 总销售额
 router.get("/totalSales", async (req, res) => {
+  const whereCondition = Object.keys(req.query).reduce((acc, key) => {
+    acc[key] = { [Op.like]: `%${req.query[key]}%` };
+    return acc;
+  }, {});
   try {
-    const totalSales = await Order.sum("total_price");
+    const totalSales = await Order.sum("total_price",{
+      where:{
+        ...whereCondition
+      }
+    });
     res.json({
       code: "0000",
       message: "查询成功",
@@ -38,8 +46,13 @@ router.get("/dailySales", async (req, res) => {
   );
 
   try {
+    const whereCondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
     const dailySales = await Order.sum("total_price", {
       where: {
+        ...whereCondition,
         createdAt: {
           [Op.between]: [startOfDay, endOfDay],
         },
@@ -62,11 +75,19 @@ router.get("/dailySales", async (req, res) => {
 // 总订单量
 router.get("/totalOrderQuantity", async (req, res) => {
   try {
-    const totalSales = await Order.count();
+    const whereCoondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
+    const totalSales = await Order.count({
+      where:{
+        ...whereCoondition
+      }
+    });
     res.json({
       code: "0000",
       message: "查询成功",
-      totalSales: totalSales,
+      totalOrderQuantity: totalSales,
     });
   } catch (err) {
     res.json({
@@ -80,15 +101,20 @@ router.get("/totalOrderQuantity", async (req, res) => {
 // 总成功订单量
 router.get("/totalSuccessfulOrders", async (req, res) => {
   try {
+    const whereCoondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
     const totalSales = await Order.count({
       where: {
+        ...whereCoondition,
         order_status: 6,
       },
     });
     res.json({
       code: "0000",
       message: "查询成功",
-      totalSales: totalSales,
+      totalSuccessfulOrders: totalSales,
     });
   } catch (err) {
     res.json({
@@ -105,13 +131,17 @@ router.get("/weeklySales", async (req, res) => {
     // 获取一周前的日期
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
-
+    const whereCoondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
     const weeklySales = await Order.findAll({
       attributes: [
         [Sequelize.fn("DATE", Sequelize.col("createdAt")), "order_date"],
         [Sequelize.fn("SUM", Sequelize.col("total_price")), "total_sales"],
       ],
       where: {
+        ...whereCoondition,
         createdAt: {
           [Op.gte]: oneWeekAgo, // 大于等于一周前的日期
         },
@@ -161,12 +191,17 @@ router.get("/weeklyMerchandiseSales", async (req, res) => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
 
     // 查询一周内的订单数据
+    const whereCoondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
     const salesData = await Order.findAll({
       attributes: [
         'commodity_name', // 选择商品名称列
         [Sequelize.fn('SUM', Sequelize.col('quantity')), 'totalSales'], // 计算每天的总销售数量
       ],
       where: {
+        ...whereCoondition,
         createdAt: {
           [Op.gte]: oneWeekAgo, // 大于等于一周前的日期
         },
@@ -214,6 +249,10 @@ router.get("/calculateWeeklySales", async (req, res) => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 6);
 
     // 查询一周内的订单数量
+    const whereCoondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
     const orders = await Order.findAll({
       raw: true,
       attributes: [
@@ -221,6 +260,7 @@ router.get("/calculateWeeklySales", async (req, res) => {
         [Sequelize.fn('count', Sequelize.col('id')), 'count'],
       ],
       where: {
+        ...whereCoondition,
         createdAt: {
           [Op.gte]: oneWeekAgo, // 大于等于一周前的日期
         },
@@ -261,7 +301,14 @@ router.get("/calculateWeeklySales", async (req, res) => {
 // 总10个商品的销售榜
 router.get("/allProductSalesTrends", async (req, res) => {
   try {
+    const whereCoondition = Object.keys(req.query).reduce((acc, key) => {
+      acc[key] = { [Op.like]: `%${req.query[key]}%` };
+      return acc;
+    }, {});
     const salesData = await Order.findAll({
+      where:{
+        ...whereCoondition
+      },
       attributes: [
         "commodity_name",
         [Sequelize.fn("SUM", Sequelize.col("quantity")), "quantity"],

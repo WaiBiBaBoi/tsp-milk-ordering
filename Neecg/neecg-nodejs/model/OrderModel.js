@@ -25,6 +25,8 @@ const Product = require("./ProductModel");
 const Commodity = require("./CommodityModel");
 const Delivery = require("./DeliveryModel");
 const Salesman = require("./SalesmanModel");
+const SystemDepartmentModel = require("./SystemDepartmentModel");
+
 class Order extends Model {}
 // 初始化 SystemRole 模型，定义其结构和设置
 Order.init({
@@ -38,6 +40,14 @@ Order.init({
     type: DataTypes.UUID,
     references: {
       model: User,
+      key: 'id'
+    },
+    allowNull: false,
+  },
+  department_id:{
+    type: DataTypes.UUID,
+    references: {
+      model: SystemDepartmentModel,
       key: 'id'
     },
     allowNull: false,
