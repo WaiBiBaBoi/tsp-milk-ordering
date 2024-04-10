@@ -59,6 +59,8 @@ import { ref, reactive } from "vue";
 import { postAction } from "../api/manage";
 import router from "../router/index";
 import { message } from 'ant-design-vue';
+import { setCookie } from "../utils/cookie";
+
 let formState = ref("login");
 let param = reactive({
   user_account: "",
@@ -121,6 +123,7 @@ const login = (url, values) => {
       if (formState.value === "login") {
         formRef.value.resetFields();
         codeState.value = false
+        setCookie('milk-token',res.data.token,7)
         router.push("/");
       } else if (formState.value === "register") {
         formState.value = "login"

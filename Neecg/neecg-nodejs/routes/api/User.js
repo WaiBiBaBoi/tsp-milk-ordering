@@ -93,10 +93,18 @@ router.post("/login", (req, res) => {
   }).then((result) => {
     if (result) {
       const token = jwtTokne(result);
-      res.cookie("milk-token", token).json({
+      // res.cookie("milk-token", token).json({
+      //   code: "0000",
+      //   message: "登录成功!",
+      //   data: result,
+      // });
+      res.json({
         code: "0000",
         message: "登录成功!",
-        data: result,
+        data: {
+          user:result,
+          token:token
+        },
       });
     } else {
       res.json({
