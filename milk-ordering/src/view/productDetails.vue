@@ -259,6 +259,7 @@ const getCommentImage = (arr) => {
 };
 const submitOrder = async () => {
   orderInfoParam.commodity_id = product.commodity_id;
+  orderInfoParam.department_id = product.department_id;
   try {
     if (bool.value) return;
     bool.value = true;
@@ -285,6 +286,7 @@ const getSales = (num) => {
 const changeCommoditys = (item, index) => {
   if (index === commoditysActive) return;
   commoditysActive = index;
+  product.department_id = item.department_id
   product.commodity_id = item.id;
   product.price = item.price;
   product.text = item.commodity_name;
@@ -307,6 +309,7 @@ const getProduct = () => {
         for (let key in res.data) {
           product[key] = res.data[key];
         }
+        product.department_id = res.data.department_id;
         product.commodity_id = res.data.commoditys[0].id;
         product.price = res.data.commoditys[0].price;
         product.text = res.data.commoditys[0].commodity_name;

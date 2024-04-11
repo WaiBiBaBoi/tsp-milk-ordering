@@ -120,7 +120,8 @@ router.post("/purchasing", async (req, res) => {
       product_name:product.product_name,
       commodity_name:commodity.commodity_name,
       price:commodity.price,
-      image:commodity.images
+      image:commodity.images,
+      department_id: req.body.department_id
     });
     let payUnitPrice = commodity.price
     let payQuantity = req.body.quantity

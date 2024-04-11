@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const SECRET_KEY = 'your-secret-key' // 生产环境中应该更安全，且存储在环境变量中
 
 module.exports = (req, res, nuxt) => {
-  const token = req.get('token') || req.cookies['milk-token'];
+  const token = req.get('token') || req.get('milk-token');
   console.log(token,'---------------')
   if (token) {
     jwt.verify(token, SECRET_KEY, (err, result) => {

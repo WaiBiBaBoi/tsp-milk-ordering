@@ -3,6 +3,8 @@ import axios from 'axios';
 import router from '../router/index';
 // import {getToken} from '../utils/storage'
 import { notification } from 'ant-design-vue';
+import { getCookieValue } from "../utils/cookie";
+
 axios.defaults.withCredentials = true
 // 创建axios实例
 const axiosInstance = axios.create({
@@ -14,10 +16,10 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么，例如插入token
-    // const token = getToken(); // 假设你的token存储在localStorage
-    // if (token) {
-    //   config.headers['token'] = token;
-    // }
+    const token = getCookieValue('milk-token'); // 假设你的token存储在localStorage
+    if (token) {
+      config.headers['milk-token'] = token;
+    }
     // 显示加载动画
     // showLoadingAnimation();
     
