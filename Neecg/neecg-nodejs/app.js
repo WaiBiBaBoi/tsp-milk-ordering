@@ -83,6 +83,7 @@ app.use((req, res, next) => {
 });
 const verifyPaths = [
   '/api/Product/list',
+  '/api/Delivery/list',
   '/api/SystemHome/totalSales',
   '/api/SystemHome/dailySales',
   '/api/SystemHome/totalOrderQuantity',
